@@ -1,0 +1,63 @@
+[
+  {
+    "id": 1,
+    "title": "Introduction to Python Programming",
+    "category": "Programming",
+    "tags": [
+      "python",
+      "beginner",
+      "tutorial"
+    ],
+    "drive_link": "https://drive.google.com/file/d/example1/view",
+    "upload_date": "2023-10-15",
+    "file_size": "2.5 MB"
+  },
+  {
+    "id": 2,
+    "title": "Advanced Data Analysis Techniques",
+    "category": "Data Science",
+    "tags": [
+      "data",
+      "analysis",
+      "statistics"
+    ],
+    "drive_link": "https://drive.google.com/file/d/example2/view",
+    "upload_date": "2023-11-20",
+    "file_size": "3.1 MB"
+  },
+  {
+    "id": 3,
+    "title": "Advanced Data Analysis Techniques",
+    "category": "Data Science",
+    "tags": [
+      "data",
+      "analysis",
+      "statistics"
+    ],
+    "drive_link": "https://drive.google.com/file/d/example2/view",
+    "upload_date": "2023-11-20",
+    "file_size": "3.1 MB"
+  },
+  {
+    "id": 4,
+    "title": "ewvreswv",
+    "category": "Programming",
+    "tags": "",
+    "drive_link": "https://google.com",
+    "file_size": "",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-09-26T11:19:20.530168",
+    "upload_date": "2025-09-26"
+  },
+  {
+    "id": 5,
+    "title": "nivas",
+    "category": "programming",
+    "tags": [],
+    "drive_link": "https://drive.google.com/file/d/12kxVfNVfMnOU0a1g84WQF_RNnad7rfTT/view?usp=drive_link",
+    "file_size": "N/A",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-09-26T12:39:55.187303",
+    "upload_date": "2025-09-26"
+  }
+]

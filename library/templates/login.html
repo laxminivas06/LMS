@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - PDF Library</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary-color: #1e3c72;
+            --secondary-color: #2a5298;
+            --accent-color: #4a7bd9;
+            --light-color: #f0f7ff;
+            --dark-color: #0a1930;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --admin-color: #8b5cf6;
+            --user-color: #06b6d4;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            transition: var(--transition);
+        }
+
+        body.admin-mode {
+            background: linear-gradient(135deg, #4c1d95 0%, #7c3aed 100%);
+        }
+        
+        .login-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            max-width: 500px;
+            width: 100%;
+            margin: 0 auto;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .login-container.admin-mode {
+            border: 3px solid var(--admin-color);
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.4);
+            transform: scale(1.02);
+        }
+
+        .login-container.user-mode {
+            border: 3px solid var(--user-color);
+            box-shadow: 0 0 30px rgba(6, 182, 212, 0.4);
+        }
+        
+        .login-header {
+            background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .login-header.admin-mode {
+            background: linear-gradient(135deg, var(--admin-color), #6d28d9);
+        }
+
+        .login-header.user-mode {
+            background: linear-gradient(135deg, var(--user-color), #0891b2);
+        }
+        
+        .college-logo {
+            width: 300px;
+            height: 100px;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            transition: var(--transition);
+        }
+
+        .admin-mode .college-logo {
+            filter: brightness(1.1);
+        }
+        
+        .college-logo img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+        
+        .login-header h2 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: var(--transition);
+        }
+        
+        .location-badge {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 10px;
+            transition: var(--transition);
+        }
+
+        .admin-badge {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-left: 10px;
+            animation: pulse 2s infinite;
+            font-weight: 600;
+        }
+
+        .user-badge {
+            background: linear-gradient(135deg, var(--user-color), #0891b2);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-left: 10px;
+            animation: pulse 2s infinite;
+            font-weight: 600;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .login-body {
+            padding: 30px;
+            transition: var(--transition);
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 8px;
+        }
+        
+        .form-control, .form-select {
+            padding: 12px 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .admin-mode .form-control, 
+        .admin-mode .form-select {
+            border-color: #e9d5ff;
+            background-color: #faf5ff;
+        }
+
+        .user-mode .form-control,
+        .user-mode .form-select {
+            border-color: #cffafe;
+            background-color: #f0fdfa;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(74, 123, 217, 0.1);
+        }
+
+        .admin-mode .form-control:focus, 
+        .admin-mode .form-select:focus {
+            border-color: var(--admin-color);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .user-mode .form-control:focus,
+        .user-mode .form-select:focus {
+            border-color: var(--user-color);
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+        }
+        
+        .form-text {
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+
+        .admin-hint {
+            background: linear-gradient(135deg, #f3e8ff, #ede9fe);
+            border: 2px solid var(--admin-color);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            animation: slideDown 0.5s ease;
+        }
+
+        .user-hint {
+            background: linear-gradient(135deg, #ecfeff, #cffafe);
+            border: 2px solid var(--user-color);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            animation: slideDown 0.5s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1rem;
+            width: 100%;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+            color: white;
+        }
+
+        .admin-mode .btn-primary {
+            background: linear-gradient(135deg, var(--admin-color), #6d28d9);
+        }
+
+        .user-mode .btn-primary {
+            background: linear-gradient(135deg, var(--user-color), #0891b2);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .alert {
+            border-radius: 8px;
+            border: none;
+            padding: 12px 15px;
+        }
+        
+        .alert-danger {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+        
+        .alert-success {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        
+        .session-info {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8fafc;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #64748b;
+            transition: var(--transition);
+        }
+
+        .admin-mode .session-info {
+            background: linear-gradient(135deg, #f3e8ff, #ede9fe);
+            border-left: 4px solid var(--admin-color);
+            color: #6b21a8;
+        }
+
+        .user-mode .session-info {
+            background: linear-gradient(135deg, #ecfeff, #cffafe);
+            border-left: 4px solid var(--user-color);
+            color: #0e7490;
+        }
+
+        .keyboard-hint {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            z-index: 1000;
+            animation: fadeInOut 3s ease-in-out;
+            display: none;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(20px); }
+            20% { opacity: 1; transform: translateY(0); }
+            80% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(20px); }
+        }
+
+        .key-combo {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin: 0 5px;
+            font-family: monospace;
+            font-weight: bold;
+        }
+        
+        .developer-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+            text-align: center;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .developer-info {
+            margin-bottom: 15px;
+        }
+        
+        .developer-info p {
+            margin-bottom: 5px;
+        }
+        
+        .developer-logo {
+            width: 100px;
+            height: 100px;
+            background: white;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 15px 0;
+            padding: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .developer-logo img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+        
+        .developer-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .dev-social-link {
+            color: white;
+            font-size: 1.2rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .dev-social-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        footer {
+            text-align: center;
+            color: white;
+            padding: 20px;
+            opacity: 0.8;
+            font-size: 0.9rem;
+            width: 100%;
+            margin-top: 30px;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 576px) {
+            body {
+                padding: 15px;
+            }
+            
+            .login-container {
+                max-width: 100%;
+            }
+            
+            .login-header {
+                padding: 20px 15px;
+            }
+            
+            .login-header h2 {
+                font-size: 1.5rem;
+            }
+            
+            .college-logo {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .login-body {
+                padding: 25px 20px;
+            }
+            
+            .btn {
+                padding: 10px;
+                font-size: 0.95rem;
+            }
+            
+            .developer-logo {
+                width: 80px;
+                height: 80px;
+            }
+
+            .keyboard-hint {
+                bottom: 10px;
+                right: 10px;
+                left: 10px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body class="{% if direct_admin %}admin-mode{% elif direct_user %}user-mode{% endif %}">
+    <!-- Keyboard Shortcut Hint -->
+    <div class="keyboard-hint" id="keyboardHint">
+        <i class="fas fa-keyboard"></i> 
+        <span id="hintText"></span>
+    </div>
+
+    <div class="container">
+        <div class="college-logo">
+            <img src="/static/images/college_logo.png" alt="Sphoorthy Engineering College Logo">
+        </div>
+        
+        <div class="login-container {% if direct_admin %}admin-mode{% elif direct_user %}user-mode{% endif %}" id="loginContainer">
+            <div class="login-header {% if direct_admin %}admin-mode{% elif direct_user %}user-mode{% endif %}">
+                <h2 id="loginTitle">
+                    <i class="fas fa-book"></i>
+                    {% if direct_admin %}
+                    <i class="fas fa-user-shield"></i> Admin Login
+                    {% elif direct_user %}
+                    <i class="fas fa-user-graduate"></i> Student Login
+                    {% else %}
+                    PDF Library Login
+                    {% endif %}
+                </h2>
+                
+                {% if session.get('verified_location') %}
+                <span class="location-badge">
+                    <i class="fas fa-map-marker-alt"></i> {{ session.verified_location }}
+                </span>
+                {% endif %}
+
+                {% if direct_admin %}
+                <span class="admin-badge">
+                    <i class="fas fa-crown"></i> Administrator Access
+                </span>
+                {% elif direct_user %}
+                <span class="user-badge">
+                    <i class="fas fa-user-graduate"></i> Student Access
+                </span>
+                {% endif %}
+            </div>
+
+            <div class="login-body">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show">
+                                <i class="fas fa-{{ 'exclamation-triangle' if category == 'error' else 'check-circle' }}"></i>
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                {% if direct_admin %}
+                <div class="admin-hint">
+                    <i class="fas fa-key"></i>
+                    <strong>Admin Direct Access Activated</strong><br>
+                    <small>You are logging in with administrator privileges</small>
+                </div>
+                {% elif direct_user %}
+                <div class="user-hint">
+                    <i class="fas fa-user-graduate"></i>
+                    <strong>Student Direct Access Activated</strong><br>
+                    <small>Quick access for student login</small>
+                </div>
+                {% endif %}
+
+                <form method="POST" id="loginForm">
+                    <div class="mb-3">
+                        <label for="role" class="form-label">Login As</label>
+                        <select class="form-select" id="role" name="role" required 
+                                {% if direct_admin or direct_user %}disabled{% endif %}>
+                            <option value="">Select Role</option>
+                            <option value="student" {% if direct_user %}selected{% endif %}>Student</option>
+                            
+                        </select>
+                        {% if direct_admin %}
+                        <input type="hidden" name="role" value="admin">
+                        <div class="form-text text-admin">
+                            <i class="fas fa-lock"></i> Role locked to Administrator
+                        </div>
+                        {% elif direct_user %}
+                        <input type="hidden" name="role" value="student">
+                        <div class="form-text text-user">
+                            <i class="fas fa-lock"></i> Role locked to Student
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" required
+                               placeholder="{% if direct_admin %}Admin username{% elif direct_user %}Roll number{% else %}Username{% endif %}">
+                        <div class="form-text">
+                            {% if direct_admin %}
+                            Enter your administrator username
+                            {% elif direct_user %}
+                            Enter your 10-digit roll number
+                            {% else %}
+                            For students: 10-digit roll number
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required
+                               placeholder="{% if direct_admin %}Admin password{% elif direct_user %}Date of Birth{% else %}Password{% endif %}">
+                        <div class="form-text">
+                            {% if direct_admin %}
+                            Enter your administrator password
+                            {% elif direct_user %}
+                            Enter your Date of Birth (DD/MM/YYYY)
+                            {% else %}
+                            For students: Date of Birth (DD/MM/YYYY)
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="loginButton">
+                        <i class="fas fa-sign-in-alt"></i>
+                        {% if direct_admin %}
+                        Login as Administrator
+                        {% elif direct_user %}
+                        Login as Student
+                        {% else %}
+                        Login
+                        {% endif %}
+                    </button>
+                </form>
+
+                <div class="session-info {% if direct_admin %}admin-mode{% elif direct_user %}user-mode{% endif %}" id="sessionInfo">
+                    <i class="fas fa-shield-alt"></i> 
+                    {% if direct_admin %}
+                    <strong>Admin Mode</strong> | Location verified | Enhanced security
+                    {% elif direct_user %}
+                    <strong>Student Mode</strong> | Location verified | Quick access
+                    {% else %}
+                    Location verified | Session valid for {{ config.SESSION_TIMEOUT_MINUTES }} minutes
+                    {% endif %}
+                </div>
+
+                {% if not direct_admin and not direct_user %}
+                
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Developer Section -->
+        <div class="developer-section">
+            <div class="developer-info">
+                <p style="font-size: 1rem;">Library Management System developed by <strong>Laxmi Nivas Morishetty</strong></p>
+                <p style="font-size: 0.8rem; color: rgba(255,255,255,0.9);">Cyber Security Student | SmartNLight Innovation Founder</p>
+            </div>
+            
+            <!-- SmartNLight Innovation Logo -->
+            <a href="https://smartnlightinnovation.netlify.app" target="_blank" class="developer-logo">
+                <img src="/static/images/4.png" alt="SmartNLight Innovation Logo">
+            </a>
+            
+            <!-- Developer Contact Links -->
+            <div class="developer-links">
+                <a href="https://www.linkedin.com/in/laxmi-nivas-morishetty-02468m/" target="_blank" class="dev-social-link">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+                <a href="https://laxminivasmorishetty.netlify.app" target="_blank" class="dev-social-link">
+                    <i class="fas fa-globe"></i>
+                </a>
+                <a href="https://instagram.com/laxminivasmorishetty" target="_blank" class="dev-social-link">
+                    <i class="fab fa-instagram"></i>
+                </a>
+            </div>
+        </div>
+        
+        <footer>
+       <p>© <span id="year"></span><script>document.getElementById('year').textContent=new Date().getFullYear();</script> Sphoorthy Engineering College - Library Management System. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Check access modes
+        const isAdminMode = {{ direct_admin|tojson|default('false') }};
+        const isUserMode = {{ direct_user|tojson|default('false') }};
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(event) {
+            // Ctrl/Cmd + J for Admin access
+            if ((event.ctrlKey || event.metaKey) && event.key === 'j') {
+                event.preventDefault();
+                if (!isAdminMode && !isUserMode) {
+                    showKeyboardHint('Admin access activated! Redirecting...');
+                    setTimeout(() => {
+                        window.location.href = '/admin-direct-access?key=ctrl_j_secret';
+                    }, 1000);
+                }
+            }
+
+            // Ctrl/Cmd + K for Student access
+            if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
+                event.preventDefault();
+                if (!isAdminMode && !isUserMode) {
+                    showKeyboardHint('Student access activated! Redirecting...');
+                    setTimeout(() => {
+                        window.location.href = '/user-direct-access?key=ctrl_k_secret';
+                    }, 1000);
+                }
+            }
+        });
+
+        function showKeyboardHint(message) {
+            const hint = document.getElementById('keyboardHint');
+            const hintText = document.getElementById('hintText');
+            if (hint && hintText) {
+                hintText.textContent = message;
+                hint.style.display = 'block';
+                setTimeout(() => {
+                    hint.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        // Simple animation for form elements
+        document.addEventListener('DOMContentLoaded', function() {
+            const formElements = document.querySelectorAll('.form-control, .form-select, .btn');
+            formElements.forEach((element, index) => {
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(10px)';
+                
+                setTimeout(() => {
+                    element.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+            
+            // Animate the college logo
+            const collegeLogo = document.querySelector('.college-logo');
+            if (collegeLogo) {
+                collegeLogo.style.opacity = '0';
+                collegeLogo.style.transform = 'scale(0.8)';
+                
+                setTimeout(() => {
+                    collegeLogo.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    collegeLogo.style.opacity = '1';
+                    collegeLogo.style.transform = 'scale(1)';
+                }, 200);
+            }
+
+            // Special effects for different modes
+            if (isAdminMode) {
+                // Admin mode effects
+                const loginContainer = document.getElementById('loginContainer');
+                if (loginContainer) {
+                    setInterval(() => {
+                        loginContainer.style.boxShadow = loginContainer.style.boxShadow.includes('40px') 
+                            ? '0 0 30px rgba(139, 92, 246, 0.4)'
+                            : '0 0 40px rgba(139, 92, 246, 0.6)';
+                    }, 2000);
+                }
+                
+                // Focus on username field
+                setTimeout(() => {
+                    document.getElementById('username').focus();
+                }, 500);
+            }
+            
+            if (isUserMode) {
+                // User mode effects
+                const loginContainer = document.getElementById('loginContainer');
+                if (loginContainer) {
+                    setInterval(() => {
+                        loginContainer.style.transform = loginContainer.style.transform === 'scale(1.01)' 
+                            ? 'scale(1)' 
+                            : 'scale(1.01)';
+                    }, 1500);
+                }
+            }
+
+            // Show keyboard shortcut hint on load
+            if (!isAdminMode && !isUserMode) {
+                setTimeout(() => {
+                    showKeyboardHint('Press Ctrl/Cmd + J for Admin, Ctrl/Cmd + K for Student');
+                }, 2000);
+            }
+        });
+
+        // Form submission handling
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) {
+            loginForm.addEventListener('submit', function(e) {
+                const submitBtn = document.getElementById('loginButton');
+                if (submitBtn) {
+                    if (isAdminMode) {
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Admin Authentication...';
+                    } else if (isUserMode) {
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Student Authentication...';
+                    } else {
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Authenticating...';
+                    }
+                    submitBtn.disabled = true;
+                }
+            });
+        }
+
+        // Role selection effect for normal mode
+        const roleSelect = document.getElementById('role');
+        if (roleSelect && !isAdminMode && !isUserMode) {
+            roleSelect.addEventListener('change', function() {
+                if (this.value === 'admin') {
+                    this.style.borderColor = 'var(--admin-color)';
+                    this.style.boxShadow = '0 0 0 3px rgba(139, 92, 246, 0.1)';
+                } else if (this.value === 'student') {
+                    this.style.borderColor = 'var(--user-color)';
+                    this.style.boxShadow = '0 0 0 3px rgba(6, 182, 212, 0.1)';
+                } else {
+                    this.style.borderColor = '#e5e7eb';
+                    this.style.boxShadow = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

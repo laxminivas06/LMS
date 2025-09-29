@@ -1,0 +1,110 @@
+<!-- templates/admin_locations.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Location Management - Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Add your existing styles here */
+        .location-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .map-preview {
+            height: 200px;
+            background: #f5f5f5;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Your existing header and navigation -->
+    
+    <div class="container mt-4">
+        <h2><i class="fas fa-map-marker-alt"></i> Location Management</h2>
+        
+        <div class="row">
+            {% for loc in locations %}
+            <div class="col-md-6">
+                <div class="location-card">
+                    <h4>{{ loc.name }}</h4>
+                    <div class="map-preview" id="map-{{ loop.index }}"></div>
+                    <form class="location-form" data-location="{{ loc.name }}">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>Latitude</label>
+                                <input type="number" step="any" class="form-control latitude" value="{{ loc.latitude }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Longitude</label>
+                                <input type="number" step="any" class="form-control longitude" value="{{ loc.longitude }}" required>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <label>Radius (km)</label>
+                            <input type="number" step="0.1" class="form-control radius" value="{{ loc.radius_km }}" required>
+                        </div>
+                        <div class="mt-3">
+                            <button type="submit" class="btn btn-primary">Update Location</button>
+                            {% if locations|length > 1 %}
+                            <button type="button" class="btn btn-danger delete-location">Delete</button>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="mt-4">
+            <button class="btn btn-success" id="addLocation">
+                <i class="fas fa-plus"></i> Add New Location
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript for handling location updates
+        document.querySelectorAll('.location-form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const locationName = this.dataset.location;
+                const latitude = this.querySelector('.latitude').value;
+                const longitude = this.querySelector('.longitude').value;
+                const radius = this.querySelector('.radius').value;
+                
+                fetch('/admin/update-location', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: locationName,
+                        latitude: parseFloat(latitude),
+                        longitude: parseFloat(longitude),
+                        radius_km: parseFloat(radius)
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Location updated successfully!');
+                        location.reload();
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                });
+            });
+        });
+        
+        // Add similar functionality for delete and add new location
+    </script>
+</body>
+</html>
