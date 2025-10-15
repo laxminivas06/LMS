@@ -15,16 +15,16 @@
         }
         
         :root {
-            --primary-color: #1e3c72;
-            --secondary-color: #2a5298;
-            --accent-color: #4a7bd9;
-            --light-color: #f0f7ff;
-            --dark-color: #0a1930;
-            --success-color: #10b981;
-            --danger-color: #ef4444;
-            --warning-color: #f59e0b;
-            --admin-color: #8b5cf6;
-            --user-color: #06b6d4;
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --admin-color: #9b59b6;
+            --user-color: #1abc9c;
             --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s ease;
         }
@@ -41,7 +41,7 @@
         }
 
         body.admin-mode {
-            background: linear-gradient(135deg, #4c1d95 0%, #7c3aed 100%);
+            background: linear-gradient(135deg, #8e44ad 0%, var(--admin-color) 100%);
         }
         
         .login-container {
@@ -54,17 +54,39 @@
             margin: 0 auto;
             transition: var(--transition);
             position: relative;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
+        }
+
+        .login-container:hover::before {
+            transform: scaleX(1);
+        }
+
+        .login-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
         .login-container.admin-mode {
             border: 3px solid var(--admin-color);
-            box-shadow: 0 0 30px rgba(139, 92, 246, 0.4);
-            transform: scale(1.02);
+            box-shadow: 0 0 30px rgba(155, 89, 182, 0.4);
         }
 
         .login-container.user-mode {
             border: 3px solid var(--user-color);
-            box-shadow: 0 0 30px rgba(6, 182, 212, 0.4);
+            box-shadow: 0 0 30px rgba(26, 188, 156, 0.4);
         }
         
         .login-header {
@@ -77,11 +99,11 @@
         }
 
         .login-header.admin-mode {
-            background: linear-gradient(135deg, var(--admin-color), #6d28d9);
+            background: linear-gradient(135deg, var(--admin-color), #8e44ad);
         }
 
         .login-header.user-mode {
-            background: linear-gradient(135deg, var(--user-color), #0891b2);
+            background: linear-gradient(135deg, var(--user-color), #16a085);
         }
         
         .college-logo {
@@ -91,7 +113,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 8px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             transition: var(--transition);
         }
 
@@ -128,7 +154,7 @@
         }
 
         .admin-badge {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
+            background: linear-gradient(135deg, var(--warning-color), #e67e22);
             color: white;
             padding: 8px 15px;
             border-radius: 20px;
@@ -142,7 +168,7 @@
         }
 
         .user-badge {
-            background: linear-gradient(135deg, var(--user-color), #0891b2);
+            background: linear-gradient(135deg, var(--user-color), #16a085);
             color: white;
             padding: 8px 15px;
             border-radius: 20px;
@@ -192,20 +218,20 @@
         }
         
         .form-control:focus, .form-select:focus {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 3px rgba(74, 123, 217, 0.1);
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
         }
 
         .admin-mode .form-control:focus, 
         .admin-mode .form-select:focus {
             border-color: var(--admin-color);
-            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+            box-shadow: 0 0 0 3px rgba(155, 89, 182, 0.1);
         }
 
         .user-mode .form-control:focus,
         .user-mode .form-select:focus {
             border-color: var(--user-color);
-            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+            box-shadow: 0 0 0 3px rgba(26, 188, 156, 0.1);
         }
         
         .form-text {
@@ -243,21 +269,57 @@
                 transform: translateY(0);
             }
         }
+
+        .password-requirements {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 8px;
+            font-size: 0.8rem;
+            display: none;
+        }
+
+        .password-requirements.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        .requirement {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .requirement.valid {
+            color: var(--success-color);
+        }
+
+        .requirement.invalid {
+            color: #6c757d;
+        }
+
+        .requirement i {
+            font-size: 0.7rem;
+        }
         
         .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            padding: 12px;
+            gap: 10px;
+            padding: 15px 25px;
             border: none;
             border-radius: 8px;
             text-decoration: none;
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
-            font-size: 1rem;
+            font-size: 1.1rem;
             width: 100%;
+            position: relative;
+            overflow: hidden;
         }
         
         .btn-primary {
@@ -266,16 +328,37 @@
         }
 
         .admin-mode .btn-primary {
-            background: linear-gradient(135deg, var(--admin-color), #6d28d9);
+            background: linear-gradient(135deg, var(--admin-color), #8e44ad);
         }
 
         .user-mode .btn-primary {
-            background: linear-gradient(135deg, var(--user-color), #0891b2);
+            background: linear-gradient(135deg, var(--user-color), #16a085);
         }
         
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none !important;
         }
         
         .alert {
@@ -298,7 +381,7 @@
             text-align: center;
             margin-top: 20px;
             padding: 15px;
-            background-color: #f8fafc;
+            background-color: var(--light-color);
             border-radius: 8px;
             font-size: 0.9rem;
             color: #64748b;
@@ -347,27 +430,30 @@
             font-weight: bold;
         }
         
+       /* Developer Section */
         .developer-section {
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 20px;
-            margin-top: 30px;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 40px;
             text-align: center;
             color: white;
             border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            animation: fadeInUp 0.8s ease-out;
         }
         
         .developer-info {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
         
         .developer-info p {
-            margin-bottom: 5px;
+            margin-bottom: 10px;
         }
         
         .developer-logo {
-            width: 100px;
-            height: 100px;
+            width: 120px;
+            height: 120px;
             background: white;
             border-radius: 10px;
             display: inline-flex;
@@ -375,7 +461,13 @@
             justify-content: center;
             margin: 15px 0;
             padding: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: var(--transition);
+        }
+        
+        .developer-logo:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
         }
         
         .developer-logo img {
@@ -386,26 +478,26 @@
         .developer-links {
             display: flex;
             justify-content: center;
-            gap: 15px;
-            margin-top: 15px;
+            gap: 20px;
+            margin-top: 20px;
         }
         
         .dev-social-link {
             color: white;
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             transition: var(--transition);
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.1);
         }
         
         .dev-social-link:hover {
             background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
+            transform: translateY(-2px) scale(1.1);
         }
         
         footer {
@@ -416,6 +508,59 @@
             font-size: 0.9rem;
             width: 100%;
             margin-top: 30px;
+        }
+
+        .login-info {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border: 2px solid var(--user-color);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .login-info.admin {
+            background: linear-gradient(135deg, #faf5ff, #f3e8ff);
+            border: 2px solid var(--admin-color);
+        }
+        
+        /* Animation Keyframes */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+            70% {
+                transform: scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
         
         /* Responsive Design */
@@ -437,8 +582,8 @@
             }
             
             .college-logo {
-                width: 70px;
-                height: 70px;
+                width: 250px;
+                height: 80px;
             }
             
             .login-body {
@@ -446,13 +591,13 @@
             }
             
             .btn {
-                padding: 10px;
-                font-size: 0.95rem;
+                padding: 12px;
+                font-size: 1rem;
             }
             
             .developer-logo {
-                width: 80px;
-                height: 80px;
+                width: 100px;
+                height: 100px;
             }
 
             .keyboard-hint {
@@ -472,12 +617,12 @@
     </div>
 
     <div class="container">
-        <div class="college-logo">
-            <img src="/static/images/college_logo.png" alt="Sphoorthy Engineering College Logo">
-        </div>
-        
         <div class="login-container {% if direct_admin %}admin-mode{% elif direct_user %}user-mode{% endif %}" id="loginContainer">
             <div class="login-header {% if direct_admin %}admin-mode{% elif direct_user %}user-mode{% endif %}">
+                <div class="college-logo">
+                    <img src="/static/images/college_logo.png" alt="Sphoorthy Engineering College Logo">
+                </div>
+                
                 <h2 id="loginTitle">
                     <i class="fas fa-book"></i>
                     {% if direct_admin %}
@@ -531,57 +676,55 @@
                     <strong>Student Direct Access Activated</strong><br>
                     <small>Quick access for student login</small>
                 </div>
+                {% else %}
+                
                 {% endif %}
 
                 <form method="POST" id="loginForm">
                     <div class="mb-3">
-                        <label for="role" class="form-label">Login As</label>
-                        <select class="form-select" id="role" name="role" required 
-                                {% if direct_admin or direct_user %}disabled{% endif %}>
-                            <option value="">Select Role</option>
-                            <option value="student" {% if direct_user %}selected{% endif %}>Student</option>
-                            
-                        </select>
-                        {% if direct_admin %}
-                        <input type="hidden" name="role" value="admin">
-                        <div class="form-text text-admin">
-                            <i class="fas fa-lock"></i> Role locked to Administrator
-                        </div>
-                        {% elif direct_user %}
-                        <input type="hidden" name="role" value="student">
-                        <div class="form-text text-user">
-                            <i class="fas fa-lock"></i> Role locked to Student
-                        </div>
-                        {% endif %}
-                    </div>
-
-                    <div class="mb-3">
                         <label for="username" class="form-label">Username</label>
                         <input type="text" class="form-control" id="username" name="username" required
-                               placeholder="{% if direct_admin %}Admin username{% elif direct_user %}Roll number{% else %}Username{% endif %}">
+                               placeholder="Enter your username or roll number">
                         <div class="form-text">
                             {% if direct_admin %}
                             Enter your administrator username
                             {% elif direct_user %}
                             Enter your 10-digit roll number
                             {% else %}
-                            For students: 10-digit roll number
+                            Enter your username (students: 10-digit roll number)
                             {% endif %}
                         </div>
                     </div>
-
+                    
                     <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
                         <input type="password" class="form-control" id="password" name="password" required
-                               placeholder="{% if direct_admin %}Admin password{% elif direct_user %}Date of Birth{% else %}Password{% endif %}">
+                               placeholder="Enter your password">
                         <div class="form-text">
                             {% if direct_admin %}
                             Enter your administrator password
                             {% elif direct_user %}
-                            Enter your Date of Birth (DD/MM/YYYY)
+                            Enter your Date of Birth (DDMMYYYY - 8 digits only)
                             {% else %}
-                            For students: Date of Birth (DD/MM/YYYY)
+                            Enter your password (students: Date of Birth in DDMMYYYY format)
                             {% endif %}
+                        </div>
+                        
+                        <!-- Password Requirements for Students -->
+                        <div class="password-requirements" id="passwordRequirements">
+                            <div class="requirement invalid" id="reqLength">
+                                <i class="fas fa-circle"></i>
+                                <span>Exactly 8 digits</span>
+                            </div>
+                            <div class="requirement invalid" id="reqDigits">
+                                <i class="fas fa-circle"></i>
+                                <span>Numbers only (no letters or special characters)</span>
+                            </div>
+                            <div class="requirement invalid" id="reqFormat">
+                                <i class="fas fa-circle"></i>
+                                <span>Valid DDMMYYYY format</span>
+                            </div>
+                            <small class="text-muted">Example: 15082002 for 15th August 2002</small>
                         </div>
                     </div>
 
@@ -592,7 +735,7 @@
                         {% elif direct_user %}
                         Login as Student
                         {% else %}
-                        Login
+                        Login to Library
                         {% endif %}
                     </button>
                 </form>
@@ -609,16 +752,18 @@
                 </div>
 
                 {% if not direct_admin and not direct_user %}
-                
+               
+              
                 {% endif %}
             </div>
         </div>
+        <br>
 
         <!-- Developer Section -->
         <div class="developer-section">
             <div class="developer-info">
-                <p style="font-size: 1rem;">Library Management System developed by <strong>Laxmi Nivas Morishetty</strong></p>
-                <p style="font-size: 0.8rem; color: rgba(255,255,255,0.9);">Cyber Security Student | SmartNLight Innovation Founder</p>
+                <p style="font-size: 1.1rem;">Library Management System developed by <strong>Laxmi Nivas Morishetty</strong></p>
+                <p style="font-size: 0.9rem; color: rgba(255,255,255,0.9);">Cyber Security Student | SmartNLight Innovation Founder</p>
             </div>
             
             <!-- SmartNLight Innovation Logo -->
@@ -641,7 +786,7 @@
         </div>
         
         <footer>
-       <p>© <span id="year"></span><script>document.getElementById('year').textContent=new Date().getFullYear();</script> Sphoorthy Engineering College - Library Management System. All rights reserved.</p>
+            <p>© <span id="year"></span> Sphoorthy Engineering College - Library Management System. All rights reserved.</p>
         </footer>
     </div>
 
@@ -650,6 +795,208 @@
         // Check access modes
         const isAdminMode = {{ direct_admin|tojson|default('false') }};
         const isUserMode = {{ direct_user|tojson|default('false') }};
+
+        // Enhanced password validation for students
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordInput = document.getElementById('password');
+            const usernameInput = document.getElementById('username');
+            const passwordRequirements = document.getElementById('passwordRequirements');
+            const loginForm = document.getElementById('loginForm');
+            
+            function validateStudentPassword(password) {
+                const cleanPassword = password.replace(/\D/g, '');
+                const requirements = {
+                    length: cleanPassword.length === 8,
+                    digits: /^\d+$/.test(cleanPassword),
+                    format: false
+                };
+                
+                // Validate date format
+                if (requirements.length && requirements.digits) {
+                    try {
+                        const day = parseInt(cleanPassword.substring(0, 2));
+                        const month = parseInt(cleanPassword.substring(2, 4));
+                        const year = parseInt(cleanPassword.substring(4, 8));
+                        
+                        // Basic date validation
+                        if (month >= 1 && month <= 12 && day >= 1 && day <= 31 && year >= 1900 && year <= new Date().getFullYear()) {
+                            requirements.format = true;
+                        }
+                    } catch (e) {
+                        requirements.format = false;
+                    }
+                }
+                
+                return requirements;
+            }
+            
+            function updatePasswordRequirements(requirements) {
+                const reqLength = document.getElementById('reqLength');
+                const reqDigits = document.getElementById('reqDigits');
+                const reqFormat = document.getElementById('reqFormat');
+                
+                if (requirements.length) {
+                    reqLength.classList.remove('invalid');
+                    reqLength.classList.add('valid');
+                    reqLength.innerHTML = '<i class="fas fa-check-circle"></i><span>Exactly 8 digits ✓</span>';
+                } else {
+                    reqLength.classList.remove('valid');
+                    reqLength.classList.add('invalid');
+                    reqLength.innerHTML = '<i class="fas fa-circle"></i><span>Exactly 8 digits</span>';
+                }
+                
+                if (requirements.digits) {
+                    reqDigits.classList.remove('invalid');
+                    reqDigits.classList.add('valid');
+                    reqDigits.innerHTML = '<i class="fas fa-check-circle"></i><span>Numbers only ✓</span>';
+                } else {
+                    reqDigits.classList.remove('valid');
+                    reqDigits.classList.add('invalid');
+                    reqDigits.innerHTML = '<i class="fas fa-circle"></i><span>Numbers only (no letters or special characters)</span>';
+                }
+                
+                if (requirements.format) {
+                    reqFormat.classList.remove('invalid');
+                    reqFormat.classList.add('valid');
+                    reqFormat.innerHTML = '<i class="fas fa-check-circle"></i><span>Valid DDMMYYYY format ✓</span>';
+                } else {
+                    reqFormat.classList.remove('valid');
+                    reqFormat.classList.add('invalid');
+                    reqFormat.innerHTML = '<i class="fas fa-circle"></i><span>Valid DDMMYYYY format</span>';
+                }
+            }
+            
+            function handlePasswordInput() {
+                const username = usernameInput.value.trim();
+                const isLikelyStudent = /^[A-Za-z0-9]{10}$/.test(username);
+                
+                if (isLikelyStudent && passwordInput) {
+                    // Show requirements
+                    passwordRequirements.classList.add('show');
+                    
+                    // Auto-remove non-digit characters and limit to 8 digits
+                    const cleanValue = passwordInput.value.replace(/\D/g, '').slice(0, 8);
+                    passwordInput.value = cleanValue;
+                    
+                    // Validate password
+                    if (cleanValue.length > 0) {
+                        const requirements = validateStudentPassword(cleanValue);
+                        updatePasswordRequirements(requirements);
+                    } else {
+                        updatePasswordRequirements({ length: false, digits: false, format: false });
+                    }
+                } else {
+                    passwordRequirements.classList.remove('show');
+                }
+            }
+            
+            // Event listeners
+            if (passwordInput) {
+                passwordInput.addEventListener('input', handlePasswordInput);
+                passwordInput.addEventListener('focus', function() {
+                    const username = usernameInput.value.trim();
+                    const isLikelyStudent = /^[A-Za-z0-9]{10}$/.test(username);
+                    if (isLikelyStudent) {
+                        passwordRequirements.classList.add('show');
+                    passwordInput.setAttribute('maxlength', '8');
+                    passwordInput.setAttribute('pattern', '\\d{8}');
+                        passwordInput.setAttribute('title', 'Enter 8-digit date of birth (DDMMYYYY)');
+                    }
+                });
+                passwordInput.addEventListener('blur', function() {
+                    setTimeout(() => {
+                        if (!passwordInput.matches(':focus')) {
+                            passwordRequirements.classList.remove('show');
+                        }
+                    }, 200);
+                });
+            }
+
+            if (usernameInput) {
+                usernameInput.addEventListener('input', function() {
+                    const username = this.value.trim();
+                    const isLikelyStudent = /^[A-Za-z0-9]{10}$/.test(username);
+                    
+                    if (isLikelyStudent) {
+                        passwordInput.setAttribute('maxlength', '8');
+                        passwordInput.setAttribute('pattern', '\\d{8}');
+                        passwordInput.setAttribute('title', 'Enter 8-digit date of birth (DDMMYYYY)');
+                        passwordInput.setAttribute('placeholder', 'Date of Birth (DDMMYYYY)');
+                    } else {
+                        passwordInput.removeAttribute('maxlength');
+                        passwordInput.removeAttribute('pattern');
+                        passwordInput.removeAttribute('title');
+                        passwordInput.setAttribute('placeholder', 'Enter your password');
+                    }
+                    handlePasswordInput();
+                });
+            }
+            
+            // Form submission validation
+            if (loginForm) {
+                loginForm.addEventListener('submit', function(e) {
+                    const username = usernameInput.value.trim();
+                    const password = passwordInput.value;
+                    const isLikelyStudent = /^[A-Za-z0-9]{10}$/.test(username);
+                    
+                    if (isLikelyStudent && passwordInput) {
+                        const cleanPassword = password.replace(/\D/g, '');
+                        
+                        if (cleanPassword.length !== 8) {
+                            e.preventDefault();
+                            showError('Please enter exactly 8 digits for date of birth (DDMMYYYY)');
+                            passwordInput.focus();
+                            return;
+                        }
+                        
+                        if (!/^\d+$/.test(cleanPassword)) {
+                            e.preventDefault();
+                            showError('Date of birth should contain only digits. No letters or special characters allowed.');
+                            passwordInput.focus();
+                            return;
+                        }
+                        
+                        // Validate date format
+                        const requirements = validateStudentPassword(cleanPassword);
+                        if (!requirements.format) {
+                            e.preventDefault();
+                            showError('Invalid date format. Please enter a valid date in DDMMYYYY format. Example: 15082002 for 15th August 2002');
+                            passwordInput.focus();
+                            return;
+                        }
+                    }
+                    
+                    // Show loading state
+                    const submitBtn = document.getElementById('loginButton');
+                    if (submitBtn) {
+                        if (isAdminMode) {
+                            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Admin Authentication...';
+                        } else if (isUserMode) {
+                            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Student Authentication...';
+                        } else {
+                            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Authenticating...';
+                        }
+                        submitBtn.disabled = true;
+                    }
+                });
+            }
+            
+            function showError(message) {
+                // You can implement a custom error display here
+                alert(message); // Simple alert for now
+            }
+            
+            // Initialize
+            if (isUserMode) {
+                passwordInput.setAttribute('maxlength', '8');
+                passwordInput.setAttribute('pattern', '\\d{8}');
+                passwordInput.setAttribute('title', 'Enter 8-digit date of birth (DDMMYYYY)');
+                passwordInput.setAttribute('placeholder', 'Date of Birth (DDMMYYYY)');
+            }
+            
+            // Set current year in footer
+            document.getElementById('year').textContent = new Date().getFullYear();
+        });
 
         // Keyboard shortcuts
         document.addEventListener('keydown', function(event) {
@@ -702,19 +1049,6 @@
                 }, index * 100);
             });
             
-            // Animate the college logo
-            const collegeLogo = document.querySelector('.college-logo');
-            if (collegeLogo) {
-                collegeLogo.style.opacity = '0';
-                collegeLogo.style.transform = 'scale(0.8)';
-                
-                setTimeout(() => {
-                    collegeLogo.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-                    collegeLogo.style.opacity = '1';
-                    collegeLogo.style.transform = 'scale(1)';
-                }, 200);
-            }
-
             // Special effects for different modes
             if (isAdminMode) {
                 // Admin mode effects
@@ -722,8 +1056,8 @@
                 if (loginContainer) {
                     setInterval(() => {
                         loginContainer.style.boxShadow = loginContainer.style.boxShadow.includes('40px') 
-                            ? '0 0 30px rgba(139, 92, 246, 0.4)'
-                            : '0 0 40px rgba(139, 92, 246, 0.6)';
+                            ? '0 0 30px rgba(155, 89, 182, 0.4)'
+                            : '0 0 40px rgba(155, 89, 182, 0.6)';
                     }, 2000);
                 }
                 
@@ -738,49 +1072,24 @@
                 const loginContainer = document.getElementById('loginContainer');
                 if (loginContainer) {
                     setInterval(() => {
-                        loginContainer.style.transform = loginContainer.style.transform === 'scale(1.01)' 
-                            ? 'scale(1)' 
-                            : 'scale(1.01)';
+                        loginContainer.style.transform = loginContainer.style.transform === 'translateY(-5px)' 
+                            ? 'translateY(-3px)' 
+                            : 'translateY(-5px)';
                     }, 1500);
                 }
             }
-
-            // Show keyboard shortcut hint on load
-            if (!isAdminMode && !isUserMode) {
-                setTimeout(() => {
-                    showKeyboardHint('Press Ctrl/Cmd + J for Admin, Ctrl/Cmd + K for Student');
-                }, 2000);
-            }
         });
 
-        // Form submission handling
-        const loginForm = document.getElementById('loginForm');
-        if (loginForm) {
-            loginForm.addEventListener('submit', function(e) {
-                const submitBtn = document.getElementById('loginButton');
-                if (submitBtn) {
-                    if (isAdminMode) {
-                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Admin Authentication...';
-                    } else if (isUserMode) {
-                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Student Authentication...';
-                    } else {
-                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Authenticating...';
-                    }
-                    submitBtn.disabled = true;
-                }
-            });
-        }
-
-        // Role selection effect for normal mode
-        const roleSelect = document.getElementById('role');
-        if (roleSelect && !isAdminMode && !isUserMode) {
-            roleSelect.addEventListener('change', function() {
-                if (this.value === 'admin') {
-                    this.style.borderColor = 'var(--admin-color)';
-                    this.style.boxShadow = '0 0 0 3px rgba(139, 92, 246, 0.1)';
-                } else if (this.value === 'student') {
+        // Auto-detect student based on username format
+        const usernameInput = document.getElementById('username');
+        if (usernameInput && !isAdminMode && !isUserMode) {
+            usernameInput.addEventListener('input', function() {
+                const username = this.value.trim();
+                const isLikelyStudent = /^[A-Za-z0-9]{10}$/.test(username);
+                
+                if (isLikelyStudent) {
                     this.style.borderColor = 'var(--user-color)';
-                    this.style.boxShadow = '0 0 0 3px rgba(6, 182, 212, 0.1)';
+                    this.style.boxShadow = '0 0 0 3px rgba(26, 188, 156, 0.1)';
                 } else {
                     this.style.borderColor = '#e5e7eb';
                     this.style.boxShadow = 'none';

@@ -14,14 +14,16 @@
         }
         
         :root {
-            --primary-color: #1e3c72;
-            --secondary-color: #2a5298;
-            --accent-color: #4a7bd9;
-            --light-color: #f0f7ff;
-            --dark-color: #0a1930;
-            --success-color: #10b981;
-            --danger-color: #ef4444;
-            --warning-color: #f59e0b;
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --admin-color: #9b59b6;
+            --user-color: #1abc9c;
             --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s ease;
         }
@@ -50,6 +52,7 @@
             padding: 20px 0;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
         }
         
         .header-content {
@@ -72,7 +75,16 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 5px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: var(--transition);
+        }
+
+        .college-logo:hover {
+            transform: scale(1.02);
         }
         
         .college-logo img {
@@ -86,6 +98,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
         
         .welcome-message {
@@ -107,6 +120,12 @@
             border-radius: 12px;
             font-size: 0.8rem;
             margin-left: 10px;
+            transition: var(--transition);
+        }
+
+        .role-badge:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
         }
         
         .header-right {
@@ -121,40 +140,118 @@
         }
         
         /* Stats Section */
-        .stats-section {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+        /* Flexbox approach for stats section */
+.stats-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 30px;
+    width: 100%;
+}
+
+.stat-card {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: var(--shadow);
+    text-align: center;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    animation: fadeInUp 0.8s ease-out;
+    flex: 1;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Media queries for flexbox approach */
+@media (max-width: 768px) {
+    .stats-section {
+        gap: 15px;
+    }
+    
+    .stat-card {
+        padding: 18px;
+        min-height: 160px;
+    }
+}
+
+@media (max-width: 576px) {
+    .stats-section {
+        gap: 10px;
+    }
+    
+    .stat-card {
+        padding: 15px;
+        min-height: 140px;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-section {
+        gap: 8px;
+    }
+    
+    .stat-card {
+        padding: 12px;
+        min-height: 130px;
+    }
+}
+
+@media (max-width: 360px) {
+    .stats-section {
+        gap: 6px;
+    }
+    
+    .stat-card {
+        padding: 10px;
+        min-height: 120px;
+    }
+}
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
         }
-        
-        .stat-card {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: var(--shadow);
-            text-align: center;
-            border-left: 5px solid var(--accent-color);
-            transition: var(--transition);
+
+        .stat-card:hover::before {
+            transform: scaleX(1);
         }
         
         .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
         
         .stat-card.pdfs {
-            border-left-color: var(--danger-color);
+            border-left: 5px solid var(--danger-color);
         }
         
         .stat-card.categories {
-            border-left-color: var(--success-color);
+            border-left: 5px solid var(--success-color);
         }
         
         .stat-icon {
             font-size: 2.5rem;
             margin-bottom: 15px;
             color: var(--secondary-color);
+            transition: var(--transition);
+        }
+
+        .stat-card:hover .stat-icon {
+            color: var(--accent-color);
+            transform: scale(1.1);
         }
         
         .stat-number {
@@ -162,6 +259,11 @@
             font-weight: bold;
             color: var(--dark-color);
             margin-bottom: 5px;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover .stat-number {
+            color: var(--accent-color);
         }
         
         .stat-label {
@@ -171,15 +273,22 @@
         
         /* Admin Features */
         .admin-features {
-            background: #fff7ed;
-            border: 2px dashed #fdba74;
-            border-radius: 10px;
+            background: linear-gradient(135deg, #f3e8ff, #ede9fe);
+            border: 2px solid var(--admin-color);
+            border-radius: 15px;
             padding: 25px;
             margin-bottom: 30px;
+            animation: fadeInUp 0.8s ease-out;
+            transition: var(--transition);
+        }
+
+        .admin-features:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(155, 89, 182, 0.2);
         }
         
         .admin-features h3 {
-            color: #c2410c;
+            color: var(--admin-color);
             margin-bottom: 15px;
             display: flex;
             align-items: center;
@@ -196,8 +305,28 @@
         .documents-section {
             background: white;
             padding: 30px;
-            border-radius: 10px;
+            border-radius: 15px;
             box-shadow: var(--shadow);
+            animation: fadeInUp 0.8s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .documents-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
+        }
+
+        .documents-section:hover::before {
+            transform: scaleX(1);
         }
         
         .section-header {
@@ -242,8 +371,8 @@
         
         .search-input:focus {
             outline: none;
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 3px rgba(74, 123, 217, 0.1);
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
         }
         
         .search-icon {
@@ -265,130 +394,451 @@
         
         .filter-select:focus {
             outline: none;
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 3px rgba(74, 123, 217, 0.1);
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
         }
         
         /* PDF Grid */
-        .pdf-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-        }
         
-        .pdf-card {
-            background: #f8fafc;
-            border: 1px solid #e5e7eb;
-            border-radius: 10px;
-            padding: 20px;
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .pdf-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: var(--accent-color);
-            transition: var(--transition);
-        }
-        
-        .pdf-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
-            border-color: var(--accent-color);
-        }
-        
-        .pdf-header {
-            display: flex;
-            align-items: flex-start;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-        
-        .pdf-icon {
-            flex-shrink: 0;
-            color: var(--danger-color);
-            font-size: 2rem;
-        }
-        
-        .pdf-info {
-            flex: 1;
-        }
-        
-        .pdf-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--dark-color);
-            margin-bottom: 8px;
-            line-height: 1.4;
-        }
-        
-        .pdf-category {
-            display: inline-block;
-            background: #dbeafe;
-            color: var(--secondary-color);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-        
-        .pdf-meta {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 10px;
-            font-size: 0.8rem;
-            color: #6b7280;
-        }
-        
-        .pdf-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-            margin-bottom: 15px;
-        }
-        
-        .pdf-tag {
-            background: #e5e7eb;
-            color: #374151;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.7rem;
-        }
-        
-        .pdf-actions {
-            display: flex;
-            gap: 10px;
-        }
-        
+        /* PDF Grid - Always 3 columns */
+
+
+.pdf-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s ease;
+}
+
+.pdf-card:hover::before {
+    transform: scaleX(1);
+}
+
+.pdf-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border-color: var(--accent-color);
+}
+
+
+
+.pdf-icon {
+    flex-shrink: 0;
+    color: var(--danger-color);
+    font-size: 2rem;
+    transition: var(--transition);
+}
+
+.pdf-card:hover .pdf-icon {
+    transform: scale(1.1);
+    color: var(--accent-color);
+}
+
+ 
+
+
+.pdf-card:hover .pdf-category {
+    background: var(--secondary-color);
+    color: white;
+}
+
+
+
+.pdf-meta span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+
+
+.pdf-tag {
+    background: #e5e7eb;
+    color: #374151;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    transition: var(--transition);
+}
+
+.pdf-card:hover .pdf-tag {
+    background: var(--light-color);
+}
+
+
+/* Flexbox approach for PDF Grid */
+.pdf-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.pdf-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 20px;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    animation: fadeInUp 0.8s ease-out;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 calc(33.333% - 20px);
+    min-width: 300px;
+    height: 100%;
+}
+
+/* Responsive adjustments for flexbox */
+@media (max-width: 992px) {
+    .pdf-card {
+        flex: 1 1 calc(50% - 15px);
+        min-width: 250px;
+    }
+}
+
+@media (max-width: 768px) {
+    .pdf-grid {
+        gap: 15px;
+    }
+    
+    .pdf-card {
+        flex: 1 1 calc(50% - 15px);
+        min-width: 200px;
+        padding: 15px;
+    }
+}
+
+@media (max-width: 576px) {
+    .pdf-grid {
+        gap: 12px;
+    }
+    
+    .pdf-card {
+        flex: 1 1 calc(50% - 12px);
+        min-width: 150px;
+        padding: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .pdf-grid {
+        gap: 10px;
+    }
+    
+    .pdf-card {
+        flex: 1 1 calc(50% - 10px);
+        min-width: 140px;
+        padding: 10px;
+    }
+}
+
+@media (max-width: 360px) {
+    .pdf-card {
+        flex: 1 1 100%;
+        min-width: auto;
+    }
+}
+
+/* Responsive adjustments for 3-column layout */
+@media (max-width: 1200px) {
+    .pdf-grid {
+        gap: 18px;
+    }
+    
+    .pdf-card {
+        padding: 18px;
+        min-height: 260px;
+    }
+    
+    .pdf-title {
+        font-size: 1.05rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .pdf-grid {
+        gap: 15px;
+    }
+    
+    .pdf-card {
+        padding: 16px;
+        min-height: 240px;
+    }
+    
+    .pdf-title {
+        font-size: 1rem;
+        min-height: 2.6em;
+    }
+    
+    .pdf-icon {
+        font-size: 1.8rem;
+    }
+    
+    .pdf-meta {
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .pdf-grid {
+        gap: 12px;
+    }
+    
+    .pdf-card {
+        padding: 14px;
+        min-height: 220px;
+    }
+    
+    .pdf-header {
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+    
+    .pdf-title {
+        font-size: 0.95rem;
+        min-height: 2.4em;
+    }
+    
+    .pdf-icon {
+        font-size: 1.6rem;
+    }
+    
+    .pdf-category {
+        font-size: 0.75rem;
+        padding: 3px 10px;
+    }
+    
+    .pdf-meta {
+        font-size: 0.7rem;
+    }
+    
+    .pdf-tag {
+        font-size: 0.65rem;
+        padding: 2px 6px;
+    }
+    
+    .btn {
+        padding: 7px 12px;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .pdf-grid {
+        gap: 10px;
+    }
+    
+    .pdf-card {
+        padding: 12px;
+        min-height: 200px;
+    }
+    
+    .pdf-header {
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+    
+    .pdf-title {
+        font-size: 0.9rem;
+        min-height: 2.2em;
+    }
+    
+    .pdf-icon {
+        font-size: 1.4rem;
+    }
+    
+    .pdf-category {
+        font-size: 0.7rem;
+        padding: 2px 8px;
+    }
+    
+    .pdf-meta {
+        font-size: 0.65rem;
+        gap: 3px;
+    }
+    
+    .pdf-tags {
+        margin-bottom: 10px;
+    }
+    
+    .pdf-tag {
+        font-size: 0.6rem;
+        padding: 1px 5px;
+    }
+    
+    .btn {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .pdf-grid {
+        gap: 8px;
+    }
+    
+    .pdf-card {
+        padding: 10px;
+        min-height: 180px;
+    }
+    
+    .pdf-header {
+        gap: 8px;
+        margin-bottom: 8px;
+    }
+    
+    .pdf-title {
+        font-size: 0.85rem;
+        min-height: 2em;
+    }
+    
+    .pdf-icon {
+        font-size: 1.2rem;
+    }
+    
+    .pdf-category {
+        font-size: 0.65rem;
+        padding: 2px 6px;
+    }
+    
+    .pdf-meta {
+        font-size: 0.6rem;
+    }
+    
+    .pdf-tag {
+        font-size: 0.55rem;
+    }
+    
+    .btn {
+        padding: 5px 8px;
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .pdf-grid {
+        gap: 6px;
+    }
+    
+    .pdf-card {
+        padding: 8px;
+        min-height: 160px;
+    }
+    
+    .pdf-header {
+        gap: 6px;
+        margin-bottom: 6px;
+    }
+    
+    .pdf-title {
+        font-size: 0.8rem;
+        min-height: 1.8em;
+    }
+    
+    .pdf-icon {
+        font-size: 1rem;
+    }
+    
+    .pdf-category {
+        font-size: 0.6rem;
+        padding: 1px 5px;
+    }
+    
+    .pdf-meta {
+        font-size: 0.55rem;
+    }
+    
+    .pdf-tag {
+        font-size: 0.5rem;
+    }
+    
+    .btn {
+        padding: 4px 6px;
+        font-size: 0.7rem;
+    }
+}
+
+/* No Results Styling */
+.no-results {
+    text-align: center;
+    padding: 60px 20px;
+    color: #6b7280;
+    grid-column: 1 / -1;
+    background: white;
+    border-radius: 10px;
+    border: 2px dashed #e5e7eb;
+}
+
+.no-results i {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    opacity: 0.5;
+}
+
+.no-results h3 {
+    margin-bottom: 10px;
+    color: var(--dark-color);
+}
+
+.no-results p {
+    margin-bottom: 20px;
+}
+
+/* Ensure PDF cards maintain equal height */
+.pdf-grid {
+    align-items: stretch;
+}
+
+.pdf-card {
+    height: auto;
+}
         .btn {
             display: inline-flex;
             align-items: center;
             gap: 8px;
             padding: 8px 16px;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             text-decoration: none;
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
             font-size: 0.9rem;
+            position: relative;
+            overflow: hidden;
         }
         
         .btn-primary {
             background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
             color: white;
         }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn-primary:hover::before {
+            left: 100%;
+        }
         
         .btn-primary:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
         }
         
         .btn-outline {
@@ -400,6 +850,7 @@
         .btn-outline:hover {
             border-color: var(--accent-color);
             background: #f9fafb;
+            transform: translateY(-2px);
         }
         
         /* No Results */
@@ -428,6 +879,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            animation: slideDown 0.5s ease;
         }
         
         .flash-message.success {
@@ -442,311 +894,194 @@
             border: 1px solid #fca5a5;
         }
         
-        /* Enhanced PDF Viewer Modal for Mobile */
-.pdf-modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.9);
-    z-index: 1000;
-    overflow: hidden;
-}
+        /* Enhanced PDF Viewer Modal */
+        .pdf-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 10000;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+        }
 
-.pdf-modal.active {
-    display: flex;
-    flex-direction: column;
-}
+        .pdf-modal.active {
+            display: flex;
+            flex-direction: column;
+        }
 
-.pdf-modal-header {
-    background: var(--dark-color);
-    color: white;
-    padding: 15px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-    flex-shrink: 0;
-}
+        .pdf-modal-header {
+            background: var(--dark-color);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+            flex-shrink: 0;
+            position: relative;
+            z-index: 10001;
+        }
 
-.pdf-modal-title {
-    font-size: 1.2rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 70%;
-}
+        .pdf-modal-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 70%;
+        }
 
-.pdf-modal-actions {
-    display: flex;
-    gap: 10px;
-}
+        .pdf-modal-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
 
-.pdf-modal-body {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 10px;
-    overflow: auto;
-    position: relative;
-}
+        .pdf-modal-body {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow: hidden;
+            position: relative;
+        }
 
-.pdf-viewer-container {
-    width: 100%;
-    height: 100%;
-    max-width: 1000px;
-    background: white;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
-    display: flex;
-    flex-direction: column;
-}
+        .pdf-viewer-container {
+            width: 95%;
+            height: 95%;
+            max-width: 1200px;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
 
-.pdf-viewer-toolbar {
-    background: #f8f9fa;
-    padding: 10px 15px;
-    border-bottom: 1px solid #e5e7eb;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    flex-shrink: 0;
-}
+        .pdf-viewer-toolbar {
+            background: #1f2937;
+            padding: 12px 20px;
+            border-bottom: 1px solid #374151;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            flex-shrink: 0;
+        }
 
-.pdf-viewer-controls {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    flex-wrap: wrap;
-    justify-content: center;
-}
+        .pdf-viewer-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+            color: white;
+        }
 
-.pdf-viewer-nav {
-    display: flex;
-    gap: 5px;
-    align-items: center;
-}
+        .pdf-viewer-nav {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
 
-.pdf-viewer-frame {
-    flex: 1;
-    border: none;
-    width: 100%;
-    height: 100%;
-    background: white;
-}
+        .pdf-viewer-frame {
+            flex: 1;
+            border: none;
+            width: 100%;
+            height: 100%;
+            background: white;
+        }
 
-.pdf-viewer-info {
-    font-size: 0.9rem;
-    color: #6b7280;
-    display: flex;
-    gap: 15px;
-    align-items: center;
-}
+        .pdf-viewer-info {
+            font-size: 0.9rem;
+            color: #d1d5db;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
 
-.btn-close {
-    background: transparent;
-    border: none;
-    color: white;
-    font-size: 1.5rem;
-    cursor: pointer;
-    padding: 5px;
-    border-radius: 4px;
-    transition: var(--transition);
-}
+        .btn-close {
+            background: var(--danger-color);
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 44px;
+            min-height: 44px;
+        }
 
-.btn-close:hover {
-    background: rgba(255, 255, 255, 0.1);
-}
+        .btn-close:hover {
+            background: #c0392b;
+            transform: scale(1.05);
+        }
 
-.btn-toolbar {
-    background: white;
-    border: 1px solid #d1d5db;
-    color: #374151;
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    cursor: pointer;
-    transition: var(--transition);
-    min-width: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+        .btn-toolbar {
+            background: #374151;
+            border: 1px solid #4b5563;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: var(--transition);
+            min-width: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
 
-.btn-toolbar:hover {
-    background: #f3f4f6;
-    border-color: #9ca3af;
-}
+        .btn-toolbar:hover {
+            background: #4b5563;
+            border-color: #6b7280;
+            transform: scale(1.05);
+        }
 
-.btn-toolbar:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
+        .btn-toolbar:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
 
-.zoom-controls {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
+        .zoom-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-.zoom-level {
-    min-width: 50px;
-    text-align: center;
-    font-weight: 600;
-}
+        .zoom-level {
+            min-width: 60px;
+            text-align: center;
+            font-weight: 600;
+            color: white;
+        }
 
-/* Mobile-specific PDF viewer improvements */
-@media (max-width: 768px) {
-    .pdf-modal-header {
-        padding: 10px 15px;
-    }
-    
-    .pdf-modal-title {
-        font-size: 1rem;
-        max-width: 60%;
-    }
-    
-    .pdf-modal-body {
-        padding: 5px;
-    }
-    
-    .pdf-viewer-toolbar {
-        padding: 8px 10px;
-        flex-direction: column;
-        gap: 8px;
-    }
-    
-    .pdf-viewer-controls {
-        width: 100%;
-        justify-content: space-between;
-        gap: 5px;
-    }
-    
-    .pdf-viewer-nav {
-        order: 1;
-        width: 100%;
-        justify-content: center;
-        margin-top: 5px;
-    }
-    
-    .zoom-controls {
-        order: 2;
-        width: 100%;
-        justify-content: center;
-        margin-top: 5px;
-    }
-    
-    .btn-toolbar {
-        padding: 5px 8px;
-        font-size: 0.75rem;
-        min-width: 35px;
-    }
-    
-    .pdf-viewer-info {
-        font-size: 0.8rem;
-        gap: 10px;
-    }
-    
-    .zoom-level {
-        min-width: 40px;
-    }
-    
-    /* Full-screen mobile PDF viewer */
-    .pdf-viewer-container {
-        border-radius: 0;
-        max-width: 100%;
-    }
-}
-
-@media (max-width: 480px) {
-    .pdf-modal-title {
-        font-size: 0.9rem;
-        max-width: 50%;
-    }
-    
-    .pdf-viewer-toolbar {
-        padding: 5px 8px;
-    }
-    
-    .btn-toolbar {
-        padding: 4px 6px;
-        font-size: 0.7rem;
-        min-width: 30px;
-    }
-    
-    .pdf-viewer-info {
-        font-size: 0.75rem;
-    }
-    
-    /* Stack controls vertically on very small screens */
-    .pdf-viewer-controls {
-        flex-direction: column;
-        gap: 5px;
-    }
-    
-    .pdf-viewer-nav, .zoom-controls {
-        width: 100%;
-        justify-content: center;
-    }
-}
-
-/* Touch-friendly improvements */
-@media (hover: none) and (pointer: coarse) {
-    .btn-toolbar {
-        padding: 8px 12px; /* Larger touch targets */
-        min-width: 44px; /* Minimum touch target size */
-    }
-    
-    .btn-close {
-        padding: 10px;
-        min-width: 44px;
-        min-height: 44px;
-    }
-}
-
-/* Portrait orientation optimization */
-@media (max-width: 768px) and (orientation: portrait) {
-    .pdf-modal-body {
-        padding: 0;
-    }
-    
-    .pdf-viewer-container {
-        border-radius: 0;
-    }
-}
-
-/* Landscape orientation optimization */
-@media (max-width: 768px) and (orientation: landscape) {
-    .pdf-modal-header {
-        padding: 8px 12px;
-    }
-    
-    .pdf-modal-title {
-        font-size: 0.9rem;
-    }
-    
-    .pdf-viewer-toolbar {
-        padding: 5px 8px;
-    }
-}
         /* Developer Section */
         .developer-section {
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
+            border-radius: 15px;
             padding: 30px;
             margin: 40px 0;
             text-align: center;
             color: white;
             border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            animation: fadeInUp 0.8s ease-out;
         }
         
         .developer-info {
@@ -767,7 +1102,13 @@
             justify-content: center;
             margin: 15px 0;
             padding: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: var(--transition);
+        }
+        
+        .developer-logo:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
         }
         
         .developer-logo img {
@@ -797,7 +1138,7 @@
         
         .dev-social-link:hover {
             background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
+            transform: translateY(-2px) scale(1.1);
         }
         
         footer {
@@ -808,9 +1149,67 @@
             font-size: 0.9rem;
             width: 100%;
         }
+
+        /* Animation Keyframes */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
         
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Loading indicator */
+        .pdf-loading {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--accent-color);
+            font-size: 2rem;
+            z-index: 1000;
+        }
+
+        .pdf-modal.active .pdf-loading {
+            display: block;
+        }
+
         /* Responsive Design */
-        @media (max-width: 768px) {
+        @media (max-width: 1200px) {
+            .pdf-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 992px) {
+            .stats-section {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
             .header-content {
                 flex-direction: column;
                 text-align: center;
@@ -821,20 +1220,53 @@
                 text-align: center;
             }
             
-            .stats-section {
-                grid-template-columns: 1fr;
-            }
-            
-            .pdf-grid {
-                grid-template-columns: 1fr;
-            }
-            
             .search-filter {
                 flex-direction: column;
             }
             
             .search-box {
                 min-width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 15px;
+            }
+            
+            .dashboard-header {
+                padding: 15px 0;
+            }
+            
+            .college-logo {
+                width: 250px;
+                height: 80px;
+            }
+            
+            .header-text h1 {
+                font-size: 1.5rem;
+            }
+            
+            .stats-section {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .stat-card {
+                padding: 20px;
+            }
+            
+            .stat-number {
+                font-size: 2rem;
+            }
+            
+            .pdf-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .pdf-card {
+                padding: 15px;
             }
             
             .section-header {
@@ -846,121 +1278,260 @@
                 flex-direction: column;
             }
             
-            .pdf-modal-header {
+            .btn {
                 padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+
+            /* PDF Viewer Mobile Improvements */
+            .pdf-modal-header {
+                padding: 12px 15px;
             }
             
             .pdf-modal-title {
                 font-size: 1rem;
-            }
-            
-            .pdf-viewer-toolbar {
-                flex-direction: column;
-                gap: 10px;
-                padding: 10px;
-            }
-            
-            .pdf-viewer-controls {
-                width: 100%;
-                justify-content: space-between;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .container {
-                padding: 0 10px;
-            }
-            
-            .dashboard-header {
-                padding: 15px 0;
-            }
-            
-            .header-text h1 {
-                font-size: 1.5rem;
-            }
-            
-            .stat-number {
-                font-size: 2rem;
-            }
-            
-            .pdf-card {
-                padding: 15px;
-            }
-            
-            .btn {
-                padding: 6px 12px;
-                font-size: 0.8rem;
+                max-width: 60%;
             }
             
             .pdf-modal-body {
                 padding: 10px;
             }
+            
+            .pdf-viewer-container {
+                width: 100%;
+                height: 100%;
+                border-radius: 0;
+                max-width: 100%;
+            }
+            
+            .pdf-viewer-toolbar {
+                padding: 10px 15px;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .pdf-viewer-controls {
+                width: 100%;
+                justify-content: space-between;
+                gap: 8px;
+            }
+            
+            .pdf-viewer-nav {
+                order: 1;
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .zoom-controls {
+                order: 2;
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .btn-toolbar {
+                padding: 6px 10px;
+                font-size: 0.8rem;
+                min-width: 40px;
+            }
+            
+            .pdf-viewer-info {
+                font-size: 0.8rem;
+                gap: 10px;
+            }
+            
+            .zoom-level {
+                min-width: 50px;
+            }
         }
 
+        @media (max-width: 576px) {
+            .container {
+                padding: 0 10px;
+            }
+            
+            .dashboard-main {
+                padding: 20px 0;
+            }
+            
+            .college-logo {
+                width: 200px;
+                height: 70px;
+            }
+            
+            .header-text h1 {
+                font-size: 1.3rem;
+            }
+            
+            .stat-card {
+                padding: 15px;
+            }
+            
+            .stat-number {
+                font-size: 1.8rem;
+            }
+            
+            .stat-icon {
+                font-size: 2rem;
+            }
+            
+            .documents-section {
+                padding: 20px;
+            }
+            
+            .pdf-card {
+                padding: 12px;
+            }
+            
+            .pdf-title {
+                font-size: 1rem;
+            }
+            
+            .pdf-icon {
+                font-size: 1.5rem;
+            }
+            
+            .btn {
+                padding: 8px 12px;
+                font-size: 0.8rem;
+            }
+            
+            .developer-logo {
+                width: 100px;
+                height: 100px;
+            }
 
-        /* Add this to your existing CSS */
-@media (max-width: 768px) {
-    .pdf-grid {
-        grid-template-columns: repeat(3, 1fr) !important;
-        gap: 10px !important;
-    }
-    
-    .pdf-card {
-        padding: 10px !important;
-    }
-    
-    .pdf-title {
-        font-size: 0.8rem !important;
-    }
-    
-    .pdf-category {
-        font-size: 0.6rem !important;
-        padding: 2px 6px !important;
-    }
-    
-    .pdf-meta {
-        font-size: 0.6rem !important;
-    }
-    
-    .pdf-tag {
-        font-size: 0.5rem !important;
-        padding: 1px 3px !important;
-    }
-    
-    .btn {
-        padding: 4px 8px !important;
-        font-size: 0.7rem !important;
-    }
-}
+            /* PDF Viewer Mobile Small */
+            .pdf-modal-title {
+                font-size: 0.9rem;
+                max-width: 50%;
+            }
+            
+            .pdf-viewer-toolbar {
+                padding: 8px 10px;
+            }
+            
+            .btn-toolbar {
+                padding: 5px 8px;
+                font-size: 0.75rem;
+                min-width: 36px;
+            }
+            
+            .pdf-viewer-info {
+                font-size: 0.75rem;
+            }
+            
+            .btn-close {
+                padding: 6px 10px;
+                font-size: 1rem;
+            }
+        }
 
-@media (max-width: 480px) {
-    .pdf-grid {
-        gap: 8px !important;
-    }
-    
-    .pdf-card {
-        padding: 8px !important;
-    }
-    
-    .pdf-title {
-        font-size: 0.7rem !important;
-    }
-    
-    .pdf-icon {
-        font-size: 1.5rem !important;
-    }
-}
+        @media (max-width: 480px) {
+            .stats-section {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .stat-card {
+                padding: 15px;
+            }
+            
+            .stat-number {
+                font-size: 1.5rem;
+            }
+            
+            .stat-label {
+                font-size: 0.8rem;
+            }
+            
+            .pdf-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .pdf-card {
+                padding: 10px;
+            }
+            
+            .pdf-title {
+                font-size: 0.9rem;
+            }
+            
+            .pdf-icon {
+                font-size: 1.3rem;
+            }
+            
+            .pdf-category {
+                font-size: 0.7rem;
+                padding: 3px 8px;
+            }
+            
+            .pdf-meta {
+                font-size: 0.7rem;
+            }
+            
+            .pdf-tag {
+                font-size: 0.6rem;
+                padding: 1px 5px;
+            }
+        }
 
-@media (max-width: 400px) {
-    .documents-section {
-        overflow-x: auto;
-    }
-    
-    .pdf-grid {
-        min-width: 400px; /* Minimum width to fit 3 columns */
-    }
-}
-        
+        @media (max-width: 360px) {
+            .college-logo {
+                width: 180px;
+                height: 60px;
+            }
+            
+            .header-text h1 {
+                font-size: 1.2rem;
+            }
+            
+            .stat-card {
+                padding: 12px;
+            }
+            
+            .stat-number {
+                font-size: 1.3rem;
+            }
+            
+            .stat-icon {
+                font-size: 1.8rem;
+            }
+            
+            .pdf-card {
+                padding: 8px;
+            }
+            
+            .pdf-title {
+                font-size: 0.85rem;
+            }
+            
+            .btn {
+                padding: 6px 10px;
+                font-size: 0.75rem;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            .dashboard-header,
+            .admin-features,
+            .developer-section,
+            footer,
+            .btn {
+                display: none !important;
+            }
+            
+            body {
+                background: white !important;
+                color: black !important;
+            }
+            
+            .documents-section {
+                box-shadow: none !important;
+                border: 1px solid #ccc !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -970,7 +1541,6 @@
             <div class="header-content">
                 <div class="header-left">
                     <div class="college-logo">
-                        <!-- Sphoorthy Engineering College logo -->
                         <img src="/static/images/college_logo.png" alt="Sphoorthy Engineering College Logo">
                     </div>
                     <div class="header-text">
@@ -1028,28 +1598,29 @@
     <!-- Main Content -->
     <div class="dashboard-main">
         <div class="container">
+            <!-- Statistics Section -->
            <!-- Statistics Section -->
-<div class="stats-section" style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: space-between;">
-    <div class="stat-card" style="flex: 1; min-width: 120px; text-align: center;">
+<div class="stats-section">
+    <div class="stat-card pdfs">
         <div class="stat-icon">
             <i class="fas fa-file-pdf"></i>
         </div>
-        <div class="stat-number" style="font-size: 1.2rem;">{{ pdfs|length }}</div>
-        <div class="stat-label" style="font-size: 0.8rem;">Total Documents</div>
+        <div class="stat-number">{{ pdfs|length }}</div>
+        <div class="stat-label">Total Documents</div>
     </div>
-    <div class="stat-card categories" style="flex: 1; min-width: 120px; text-align: center;">
+    <div class="stat-card categories">
         <div class="stat-icon">
             <i class="fas fa-folder"></i>
         </div>
-        <div class="stat-number" style="font-size: 1.2rem;">{{ categories|length }}</div>
-        <div class="stat-label" style="font-size: 0.8rem;">Categories</div>
+        <div class="stat-number">{{ categories|length }}</div>
+        <div class="stat-label">Categories</div>
     </div>
-    <div class="stat-card" style="flex: 1; min-width: 120px; text-align: center;">
+    <div class="stat-card users">
         <div class="stat-icon">
-            <i class="fas fa-check-circle"></i>
+            <i class="fas fa-users"></i>
         </div>
-        <div class="stat-number" style="font-size: 1.2rem;">{{ users|length }}</div>
-        <div class="stat-label" style="font-size: 0.8rem;">Total Users</div>
+        <div class="stat-number">{{ user_stats.total_users }}</div>
+        <div class="stat-label">Total Users</div>
     </div>
 </div>
 
@@ -1075,74 +1646,73 @@
                         <i class="fas fa-files"></i>
                         PDF Documents ({{ pdfs|length }})
                     </h2>
-                  <!-- Search and Filter - Fixed Ratio -->
-<div class="search-filter" style="display: flex; gap: 10px; align-items: center; flex-wrap: nowrap;">
-    <div class="search-box" style="flex: 7; min-width: 200px;">
-        <input type="text" id="searchInput" class="search-input" placeholder="Search documents..." value="{{ search_query }}" oninput="performSearch()">
-        <i class="fas fa-search search-icon"></i>
-    </div>
-    <select class="filter-select" id="categoryFilter" onchange="performSearch()" style="flex: 3; min-width: 150px;">
-        <option value="">All Categories</option>
-        {% for category in categories %}
-        <option value="{{ category }}" {% if category_filter == category %}selected{% endif %}>
-            {{ category }}
-        </option>
-        {% endfor %}
-    </select>
-    {% if search_query or category_filter %}
-    <a href="{{ url_for('dashboard') }}" class="btn btn-outline" style="white-space: nowrap; flex-shrink: 0;">
-        <i class="fas fa-times"></i> Clear
-    </a>
-    {% endif %}
-</div>
                 </div>
                 
-                <!-- PDF Grid - Always 3 per row -->
-<div class="pdf-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; width: 100%;">
-    {% for pdf in pdfs %}
-    <div class="pdf-card" style="min-width: 0; width: 100%;">
-        <div class="pdf-header">
-            <div class="pdf-icon">
-                <i class="fas fa-file-pdf"></i>
-            </div>
-            <div class="pdf-info">
-                <h3 class="pdf-title" style="font-size: 0.9rem; margin-bottom: 5px; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ pdf.title }}</h3>
-                <span class="pdf-category" style="font-size: 0.7rem;">{{ pdf.category }}</span>
-                <div class="pdf-meta" style="font-size: 0.65rem; margin-top: 6px;">
-                    <span><i class="fas fa-weight-hanging"></i> {{ pdf.file_size }}</span>
-                    <span><i class="fas fa-calendar"></i> {{ pdf.upload_date }}</span>
+                <!-- Search and Filter -->
+                <div class="search-filter">
+                    <div class="search-box">
+                        <input type="text" id="searchInput" class="search-input" placeholder="Search documents..." value="{{ search_query }}" oninput="performSearch()">
+                        <i class="fas fa-search search-icon"></i>
+                    </div>
+                    <select class="filter-select" id="categoryFilter" onchange="performSearch()">
+                        <option value="">All Categories</option>
+                        {% for category in categories %}
+                        <option value="{{ category }}" {% if category_filter == category %}selected{% endif %}>
+                            {{ category }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    {% if search_query or category_filter %}
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-outline">
+                        <i class="fas fa-times"></i> Clear
+                    </a>
+                    {% endif %}
                 </div>
-                {% if pdf.tags %}
-                <div class="pdf-tags" style="margin-top: 6px;">
-                    {% for tag in pdf.tags %}
-                    <span class="pdf-tag" style="font-size: 0.6rem; padding: 1px 4px;">{{ tag }}</span>
+                
+                <!-- PDF Grid -->
+                <div class="pdf-grid">
+                    {% for pdf in pdfs %}
+                    <div class="pdf-card">
+                        <div class="pdf-header">
+                            <div class="pdf-icon">
+                                <i class="fas fa-file-pdf"></i>
+                            </div>
+                            <div class="pdf-info">
+                                <h3 class="pdf-title">{{ pdf.title }}</h3>
+                                <span class="pdf-category">{{ pdf.category }}</span>
+                                <div class="pdf-meta">
+                                    <span><i class="fas fa-weight-hanging"></i> {{ pdf.file_size }}</span>
+                                    <span><i class="fas fa-calendar"></i> {{ pdf.upload_date }}</span>
+                                </div>
+                                {% if pdf.tags %}
+                                <div class="pdf-tags">
+                                    {% for tag in pdf.tags %}
+                                    <span class="pdf-tag">{{ tag }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="pdf-actions">
+                            <button class="btn btn-primary" onclick="openPdfViewer('{{ pdf.drive_link }}', '{{ pdf.title }}')">
+                                <i class="fas fa-eye"></i> View PDF
+                            </button>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="no-results">
+                        <i class="fas fa-search"></i>
+                        <h3>No documents found</h3>
+                        <p>Try adjusting your search terms or filters</p>
+                        {% if user_role == 'admin' %}
+                        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-primary" style="margin-top: 15px;">
+                            <i class="fas fa-plus"></i> Add PDFs in Admin Panel
+                        </a>
+                        {% endif %}
+                    </div>
                     {% endfor %}
                 </div>
-                {% endif %}
             </div>
-        </div>
-        <div class="pdf-actions">
-            <button class="btn btn-primary" onclick="openPdfViewer('{{ pdf.drive_link }}', '{{ pdf.title }}')" style="font-size: 0.7rem; padding: 4px 8px;">
-                <i class="fas fa-eye"></i> View PDF
-            </button>
-        </div>
-    </div>
-    {% else %}
-    <div class="no-results" style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
-        <i class="fas fa-search" style="font-size: 4rem; margin-bottom: 20px; opacity: 0.5;"></i>
-        <h3>No documents found</h3>
-        <p>Try adjusting your search terms or filters</p>
-        {% if user_role == 'admin' %}
-        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-primary" style="margin-top: 15px; font-size: 0.9rem; padding: 8px 16px;">
-            <i class="fas fa-plus"></i> Add PDFs in Admin Panel
-        </a>
-        {% endif %}
-    </div>
-    {% endfor %}
-</div>
-</div>
-
-                
 
             <!-- Developer Section -->
             <div class="developer-section">
@@ -1180,13 +1750,16 @@
                 <span id="pdfModalTitle">PDF Document</span>
             </div>
             <div class="pdf-modal-actions">
-               
-                <button class="btn-close" id="closePdfModal">
-                    <i class="fas fa-times"></i>
+                <button class="btn-close" id="closePdfModal" title="Close PDF Viewer">
+                    <i class="fas fa-times"></i> Close
                 </button>
             </div>
         </div>
         <div class="pdf-modal-body">
+            <div class="pdf-loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p style="font-size: 1rem; margin-top: 10px; color: white;">Loading PDF...</p>
+            </div>
             <div class="pdf-viewer-container">
                 <div class="pdf-viewer-toolbar">
                     <div class="pdf-viewer-controls">
@@ -1194,7 +1767,7 @@
                             <button class="btn-toolbar" id="prevPage" title="Previous Page">
                                 <i class="fas fa-chevron-left"></i>
                             </button>
-                            <span id="pageInfo">Page 1 of 1</span>
+                            <span id="pageInfo" class="pdf-viewer-info">Page 1 of 1</span>
                             <button class="btn-toolbar" id="nextPage" title="Next Page">
                                 <i class="fas fa-chevron-right"></i>
                             </button>
@@ -1219,363 +1792,259 @@
                 <iframe class="pdf-viewer-frame" id="pdfViewer" 
                         sandbox="allow-scripts allow-same-origin"
                         allow="fullscreen"
-                        title="PDF Document Viewer">
+                        title="PDF Document Viewer"
+                        style="background: white;">
                 </iframe>
             </div>
         </div> 
     </div>
 
     <footer>
-      <p>© <span id="year"></span><script>document.getElementById('year').textContent=new Date().getFullYear();</script> Sphoorthy Engineering College - Library Management System. All rights reserved.</p>
+        <p>© <span id="year"></span> Sphoorthy Engineering College - Library Management System. All rights reserved.</p>
     </footer>
+
     <script>
-        // Search functionality
-function performSearch() {
-    const searchTerm = document.getElementById('searchInput').value;
-    const category = document.getElementById('categoryFilter').value;
-    
-    const params = new URLSearchParams();
-    if (searchTerm) params.append('search', searchTerm);
-    if (category) params.append('category', category);
-    
-    window.location.href = '{{ url_for("dashboard") }}?' + params.toString();
-}
+        // Set current year in footer
+        document.getElementById('year').textContent = new Date().getFullYear();
 
-// Enter key support for search
-document.getElementById('searchInput').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        performSearch();
-    }
-});
+        // Enhanced PDF Viewer with embedded viewing and download protection
+        let currentPdfUrl = '';
+        let currentZoom = 100;
+        let isMobile = window.innerWidth <= 768;
 
+        // Search functionality with debouncing
+        let searchTimeout;
 
-// Search functionality with debouncing
-let searchTimeout;
-
-function performSearch() {
-    // Clear previous timeout
-    clearTimeout(searchTimeout);
-    
-    // Set new timeout to wait 300ms after user stops typing
-    searchTimeout = setTimeout(() => {
-        const searchTerm = document.getElementById('searchInput').value;
-        const category = document.getElementById('categoryFilter').value;
-        
-        const params = new URLSearchParams();
-        if (searchTerm) params.append('search', searchTerm);
-        if (category) params.append('category', category);
-        
-        window.location.href = '{{ url_for("dashboard") }}?' + params.toString();
-    }, 300); // 300ms delay
-}
-
-// Remove the old Enter key event listener since we're using oninput
-// Optional: Keep Enter key for immediate search if desired
-document.getElementById('searchInput').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        clearTimeout(searchTimeout); // Clear any pending timeout
-        performSearch(); // Execute immediately
-    }
-});
-
-// Clear search when input is emptied with backspace
-document.getElementById('searchInput').addEventListener('input', function(e) {
-    if (e.target.value === '') {
-        clearTimeout(searchTimeout);
-        performSearch(); // Execute immediately when cleared
-    }
-});
-
-// Enhanced PDF Viewer functionality for mobile
-let currentPdfUrl = '';
-let currentZoom = 100;
-let isMobile = window.innerWidth <= 768;
-
-// Detect mobile devices and orientation changes
-function checkMobileStatus() {
-    isMobile = window.innerWidth <= 768;
-}
-
-window.addEventListener('resize', checkMobileStatus);
-window.addEventListener('orientationchange', function() {
-    // Re-layout after orientation change
-    setTimeout(checkMobileStatus, 100);
-});
-
-function openPdfViewer(pdfUrl, title) {
-    currentPdfUrl = pdfUrl;
-    document.getElementById('pdfModalTitle').textContent = title;
-    document.getElementById('pdfModal').classList.add('active');
-    
-    // Disable body scroll when modal is open
-    document.body.style.overflow = 'hidden';
-    
-    // Convert Google Drive link to embedded viewer URL
-    const embeddedUrl = convertToEmbeddedUrl(pdfUrl);
-    document.getElementById('pdfViewer').src = embeddedUrl;
-    
-    // For mobile, set initial zoom to fit width
-    if (isMobile) {
-        currentZoom = 80;
-        updateZoomDisplay();
-    } else {
-        currentZoom = 100;
-        updateZoomDisplay();
-    }
-    
-    // Disable right-click on the iframe to prevent download
-    document.getElementById('pdfViewer').onload = function() {
-        const iframe = document.getElementById('pdfViewer');
-        try {
-            iframe.contentDocument.addEventListener('contextmenu', function(e) {
-                e.preventDefault();
-                return false;
-            });
-        } catch (e) {
-            // Cross-origin restrictions may prevent this
+        function performSearch() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                const searchTerm = document.getElementById('searchInput').value;
+                const category = document.getElementById('categoryFilter').value;
+                
+                const params = new URLSearchParams();
+                if (searchTerm) params.append('search', searchTerm);
+                if (category) params.append('category', category);
+                
+                window.location.href = '{{ url_for("dashboard") }}?' + params.toString();
+            }, 300);
         }
-    };
-    
-    resetPageInfo();
-}
 
-function convertToEmbeddedUrl(driveUrl) {
-    // Convert Google Drive view URL to embedded preview URL
-    if (driveUrl.includes('/file/d/')) {
-        const fileId = driveUrl.match(/\/file\/d\/([^\/]+)/)[1];
-        return `https://drive.google.com/file/d/${fileId}/preview`;
-    }
-    return driveUrl;
-}
-
-function updateZoomDisplay() {
-    document.getElementById('zoomLevel').textContent = currentZoom + '%';
-    // Apply zoom to the iframe (this is a simplified approach)
-    try {
-        const iframe = document.getElementById('pdfViewer');
-        if (iframe.contentDocument && iframe.contentDocument.body) {
-            iframe.contentDocument.body.style.zoom = currentZoom + '%';
-        }
-    } catch (e) {
-        // Cross-origin restrictions may prevent this
-        console.log('Zoom adjustment may be limited due to security restrictions');
-    }
-}
-
-function resetPageInfo() {
-    document.getElementById('pageInfo').textContent = 'Page 1 of 1';
-    document.getElementById('prevPage').disabled = true;
-    document.getElementById('nextPage').disabled = true;
-}
-
-// Close modal
-document.getElementById('closePdfModal').addEventListener('click', function() {
-    document.getElementById('pdfModal').classList.remove('active');
-    document.getElementById('pdfViewer').src = '';
-    // Re-enable body scroll
-    document.body.style.overflow = '';
-});
-
-// Zoom controls
-document.getElementById('zoomIn').addEventListener('click', function() {
-    if (currentZoom < 200) {
-        currentZoom += isMobile ? 5 : 10; // Smaller increments on mobile
-        updateZoomDisplay();
-    }
-});
-
-document.getElementById('zoomOut').addEventListener('click', function() {
-    if (currentZoom > 50) {
-        currentZoom -= isMobile ? 5 : 10; // Smaller increments on mobile
-        updateZoomDisplay();
-    }
-});
-
-document.getElementById('fitWidth').addEventListener('click', function() {
-    currentZoom = isMobile ? 80 : 100;
-    updateZoomDisplay();
-});
-
-document.getElementById('fitPage').addEventListener('click', function() {
-    currentZoom = isMobile ? 70 : 80;
-    updateZoomDisplay();
-});
-
-// Print functionality
-document.getElementById('printBtn').addEventListener('click', function() {
-    const iframe = document.getElementById('pdfViewer');
-    try {
-        iframe.contentWindow.print();
-    } catch (e) {
-        alert('Printing may not be available for this document due to security restrictions.');
-    }
-});
-
-// Page navigation (simplified - actual implementation would require PDF.js)
-document.getElementById('prevPage').addEventListener('click', function() {
-    // This would require integration with a PDF library like PDF.js
-    alert('Multi-page navigation requires PDF.js integration');
-});
-
-document.getElementById('nextPage').addEventListener('click', function() {
-    // This would require integration with a PDF library like PDF.js
-    alert('Multi-page navigation requires PDF.js integration');
-});
-
-// Close modal with Escape key
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        document.getElementById('pdfModal').classList.remove('active');
-        document.getElementById('pdfViewer').src = '';
-        // Re-enable body scroll
-        document.body.style.overflow = '';
-    }
-});
-
-// Handle mobile back button (Android)
-window.addEventListener('popstate', function() {
-    if (document.getElementById('pdfModal').classList.contains('active')) {
-        document.getElementById('pdfModal').classList.remove('active');
-        document.getElementById('pdfViewer').src = '';
-        // Re-enable body scroll
-        document.body.style.overflow = '';
-    }
-});
-
-// Prevent zoom on double-tap for mobile (improves PDF viewing experience)
-document.addEventListener('DOMContentLoaded', function() {
-    let lastTouchEnd = 0;
-    document.addEventListener('touchend', function(event) {
-        const now = (new Date()).getTime();
-        if (now - lastTouchEnd <= 300) {
-            event.preventDefault();
-        }
-        lastTouchEnd = now;
-    }, false);
-});
-
-// Boundary checking
-setInterval(function() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            function(position) {
-                fetch('/check-boundary', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        latitude: position.coords.latitude,
-                        longitude: position.coords.longitude
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.redirect) {
-                        window.location.href = data.redirect_url;
-                    }
-                });
-            },
-            function(error) {
-                console.log('Error getting location:', error);
+        // Enter key support for search
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                clearTimeout(searchTimeout);
+                performSearch();
             }
-        );
-    }
-}, 30000); // Check every 30 seconds
+        });
 
-// Simple number counting animation
-document.addEventListener('DOMContentLoaded', function() {
-    const statNumbers = document.querySelectorAll('.stat-number');
-    statNumbers.forEach(stat => {
-        const target = parseInt(stat.textContent);
-        let current = 0;
-        const increment = target / 30;
-        
-        const updateNumber = () => {
-            if (current < target) {
-                current += increment;
-                stat.textContent = Math.ceil(current);
-                setTimeout(updateNumber, 50);
-            } else {
-                stat.textContent = target;
+        // Clear search when input is emptied
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            if (e.target.value === '') {
+                clearTimeout(searchTimeout);
+                performSearch();
             }
-        };
-        
-        updateNumber();
-    });
-});
+        });
 
-// Responsive adjustments
-function initResponsive() {
-    // Update mobile status
-    checkMobileStatus();
-    
-    // Add any other responsive-specific initializations here
-    if (isMobile) {
-        // Mobile-specific initializations
-        console.log('Mobile view detected');
-    } else {
-        // Desktop-specific initializations
-        console.log('Desktop view detected');
-    }
-}
+        // Mobile detection
+        function checkMobileStatus() {
+            isMobile = window.innerWidth <= 768;
+        }
 
-// Initialize on load and resize
-window.addEventListener('load', initResponsive);
-window.addEventListener('resize', initResponsive);
+        window.addEventListener('resize', checkMobileStatus);
+        window.addEventListener('orientationchange', function() {
+            setTimeout(checkMobileStatus, 100);
+        });
 
-// Touch gesture support for mobile PDF navigation
-let touchStartX = 0;
-let touchStartY = 0;
+        // Enhanced PDF Viewer function
+        function openPdfViewer(pdfUrl, title) {
+            currentPdfUrl = pdfUrl;
+            document.getElementById('pdfModalTitle').textContent = title;
+            const modal = document.getElementById('pdfModal');
+            modal.classList.add('active');
+            
+            // Disable body scroll
+            document.body.style.overflow = 'hidden';
+            
+            // Show loading indicator
+            document.querySelector('.pdf-loading').style.display = 'block';
+            
+            // Convert to embedded URL and load
+            const embeddedUrl = convertToEmbeddedUrl(pdfUrl);
+            const iframe = document.getElementById('pdfViewer');
+            
+            // Set iframe source
+            iframe.src = embeddedUrl;
+            
+            // Set initial zoom for mobile/desktop
+            currentZoom = isMobile ? 80 : 100;
+            updateZoomDisplay();
+            
+            // Hide loading indicator when PDF loads
+            iframe.onload = function() {
+                document.querySelector('.pdf-loading').style.display = 'none';
+                
+                // Enhanced download protection
+                try {
+                    // Disable right-click context menu
+                    iframe.contentDocument.addEventListener('contextmenu', function(e) {
+                        e.preventDefault();
+                        return false;
+                    });
+                    
+                    // Disable text selection
+                    iframe.contentDocument.addEventListener('selectstart', function(e) {
+                        e.preventDefault();
+                        return false;
+                    });
+                    
+                    // Remove download buttons from Google Drive viewer
+                    const style = document.createElement('style');
+                    style.textContent = `
+                        .ndfHFb-c4YZDc-Wrql6b, 
+                        .ndfHFb-c4YZDc-ToZjC, 
+                        .ndfHFb-c4YZDc-bN97Pc-tJHJj,
+                        .ndfHFb-c4YZDc-GSQQnc,
+                        [aria-label*="Download"],
+                        [jsname*="download"] {
+                            display: none !important;
+                        }
+                    `;
+                    iframe.contentDocument.head.appendChild(style);
+                    
+                } catch (e) {
+                    console.log('Enhanced protection applied');
+                }
+            };
+            
+            resetPageInfo();
+            addToBrowserHistory();
+        }
 
-document.addEventListener('touchstart', function(e) {
-    touchStartX = e.changedTouches[0].screenX;
-    touchStartY = e.changedTouches[0].screenY;
-}, false);
+        // Convert Google Drive URL to embedded viewer
+        function convertToEmbeddedUrl(driveUrl) {
+            if (driveUrl.includes('/file/d/')) {
+                const fileId = driveUrl.match(/\/file\/d\/([^\/]+)/)[1];
+                return `https://drive.google.com/file/d/${fileId}/preview?embedded=true&toolbar=0&navpanes=0`;
+            }
+            return driveUrl;
+        }
 
-document.addEventListener('touchend', function(e) {
-    const touchEndX = e.changedTouches[0].screenX;
-    const touchEndY = e.changedTouches[0].screenY;
-    const diffX = touchEndX - touchStartX;
-    const diffY = touchEndY - touchStartY;
-    
-    // Only consider horizontal swipes with minimal vertical movement
-    if (Math.abs(diffX) > 50 && Math.abs(diffY) < 50) {
-        // Check if we're in the PDF viewer
-        if (document.getElementById('pdfModal').classList.contains('active')) {
-            if (diffX > 0) {
-                // Swipe right - previous page
-                document.getElementById('prevPage').click();
-            } else {
-                // Swipe left - next page
-                document.getElementById('nextPage').click();
+        // Update zoom display
+        function updateZoomDisplay() {
+            document.getElementById('zoomLevel').textContent = currentZoom + '%';
+            try {
+                const iframe = document.getElementById('pdfViewer');
+                if (iframe.contentDocument && iframe.contentDocument.body) {
+                    iframe.contentDocument.body.style.zoom = currentZoom + '%';
+                }
+            } catch (e) {
+                // Cross-origin restrictions
             }
         }
-    }
-}, false);
 
-// Double-tap to zoom in/out on PDF viewer
-let lastTap = 0;
-document.addEventListener('touchend', function(e) {
-    const currentTime = new Date().getTime();
-    const tapLength = currentTime - lastTap;
-    
-    if (tapLength < 300 && tapLength > 0) {
-        // Double tap detected
-        if (document.getElementById('pdfModal').classList.contains('active')) {
-            // Toggle between fit width and 100% zoom
-            if (currentZoom === 100) {
-                document.getElementById('fitWidth').click();
-            } else {
-                currentZoom = 100;
+        // Reset page info
+        function resetPageInfo() {
+            document.getElementById('pageInfo').textContent = 'Page 1 of 1';
+            document.getElementById('prevPage').disabled = true;
+            document.getElementById('nextPage').disabled = true;
+        }
+
+        // Add to browser history for back button support
+        function addToBrowserHistory() {
+            window.history.pushState({ pdfViewer: true }, '', window.location.href);
+        }
+
+        // Close modal function
+        function closePdfViewer() {
+            const modal = document.getElementById('pdfModal');
+            modal.classList.remove('active');
+            document.getElementById('pdfViewer').src = '';
+            document.body.style.overflow = '';
+            document.querySelector('.pdf-loading').style.display = 'none';
+        }
+
+        // Event listeners
+        document.getElementById('closePdfModal').addEventListener('click', closePdfViewer);
+
+        // Zoom controls
+        document.getElementById('zoomIn').addEventListener('click', function() {
+            if (currentZoom < 200) {
+                currentZoom += isMobile ? 5 : 10;
                 updateZoomDisplay();
             }
-        }
-    }
-    lastTap = currentTime;
-}, false);
-        </script>
+        });
 
-   
+        document.getElementById('zoomOut').addEventListener('click', function() {
+            if (currentZoom > 50) {
+                currentZoom -= isMobile ? 5 : 10;
+                updateZoomDisplay();
+            }
+        });
+
+        document.getElementById('fitWidth').addEventListener('click', function() {
+            currentZoom = isMobile ? 80 : 100;
+            updateZoomDisplay();
+        });
+
+        document.getElementById('fitPage').addEventListener('click', function() {
+            currentZoom = isMobile ? 70 : 80;
+            updateZoomDisplay();
+        });
+
+        // Page navigation (placeholder)
+        document.getElementById('prevPage').addEventListener('click', function() {
+            // Would require PDF.js integration for multi-page navigation
+            alert('Multi-page navigation requires advanced PDF.js integration');
+        });
+
+        document.getElementById('nextPage').addEventListener('click', function() {
+            // Would require PDF.js integration for multi-page navigation
+            alert('Multi-page navigation requires advanced PDF.js integration');
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closePdfViewer();
+            }
+        });
+
+        // Handle browser back button
+        window.addEventListener('popstate', function(event) {
+            if (event.state && event.state.pdfViewer) {
+                closePdfViewer();
+            }
+        });
+
+        // Number counting animation
+        document.addEventListener('DOMContentLoaded', function() {
+            const statNumbers = document.querySelectorAll('.stat-number');
+            statNumbers.forEach(stat => {
+                const target = parseInt(stat.textContent);
+                let current = 0;
+                const increment = target / 30;
+                
+                const updateNumber = () => {
+                    if (current < target) {
+                        current += increment;
+                        stat.textContent = Math.ceil(current);
+                        setTimeout(updateNumber, 50);
+                    } else {
+                        stat.textContent = target;
+                    }
+                };
+                
+                updateNumber();
+            });
+        });
+
+        // Initialize responsive features
+        function initResponsive() {
+            checkMobileStatus();
+        }
+
+        window.addEventListener('load', initResponsive);
+        window.addEventListener('resize', initResponsive);
+    </script>
 </body>
 </html>

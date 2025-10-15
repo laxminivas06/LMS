@@ -1,19 +1,23 @@
 import os
+from datetime import timedelta
 
 class Config:
-    # Security settings
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'your-secret-key-here'
     
-    # Allow all locations for testing
+    # Session configuration
+    PERMANENT_SESSION_LIFETIME = timedelta(minutes=60)
+    SESSION_TIMEOUT_MINUTES = 60
+    
+    # Location configuration - UPDATE THESE WITH YOUR COLLEGE COORDINATES
     ALLOWED_LOCATIONS = [
         {
-            'name': 'Global Access',
-            'latitude': 17.272034,
-            'longitude': 78.585136,
-            'radius_km': 100000.0  # Very large radius to allow all locations
+            'name': 'Sphoorthy Engineering College',
+            "latitude": 17.272034,
+            "longitude": 78.585136, # Replace with your college longitude
+            'radius_km': 2.5  # 500 meter radius - adjust as needed
         }
     ]
     
-    # App settings
-    SESSION_TIMEOUT_MINUTES = 120  # Longer session for convenience
-    PERMANENT_SESSION_LIFETIME = 7200
+    # Direct access keys
+    ADMIN_DIRECT_ACCESS_KEY = 'ctrl_j_secret'
+    USER_DIRECT_ACCESS_KEY = 'ctrl_k_secret'
