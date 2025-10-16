@@ -1549,7 +1549,7 @@
                             Library Management System
                         </h1>
                         <p class="welcome-message">
-                            Welcome back, <strong>{{ username }}</strong>!
+                            Welcome back,   <span class="field-value">{{ user_profile.name if user_profile else 'Not Available' }}</span> ID no <strong>{{ username }}</strong>!
                             <span class="role-badge">{{ user_role|title }}</span>
                         </p>
                         <p class="location-info">

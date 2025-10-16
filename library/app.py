@@ -601,6 +601,7 @@ def welcome():
     
     return render_template('welcome.html', user_stats=user_stats)
 
+
 @app.route('/dashboard')
 @require_location_verification
 def dashboard():
@@ -612,6 +613,9 @@ def dashboard():
     pdfs = load_json_data('pdfs.json')
     users = load_json_data('users.json')
     categories = list(set(pdf['category'] for pdf in pdfs))
+    
+    # Get current user profile
+    current_user = next((u for u in users if u['username'] == session.get('user_id')), None)
     
     # Get search parameters
     search_query = request.args.get('search', '')
@@ -627,11 +631,13 @@ def dashboard():
     if category_filter:
         filtered_pdfs = [pdf for pdf in filtered_pdfs if pdf['category'] == category_filter]
     
-    # Get user statistics - FIXED: Use actual users count
+    # Get user statistics
     user_stats = {
-        'total_users': len(users),  # This should now show the correct count
+        'total_users': len(users),
         'total_pdfs': len(pdfs),
         'total_categories': len(categories),
+        'documents_viewed': session.get('documents_viewed', 0),
+        'last_login': session.get('login_time', 'First time')[:10] if session.get('login_time') else 'First time'
     }
     
     return render_template('dashboard.html', 
@@ -642,7 +648,10 @@ def dashboard():
                           username=session.get('user_id', 'user'),
                           user_role=session.get('user_role', 'user'),
                           location=session.get('verified_location'),
-                          user_stats=user_stats)
+                          user_stats=user_stats,
+                          user_profile=current_user)
+
+
 
 # Update the admin dashboard route as well
 @app.route('/admin')
