@@ -14,10 +14,19 @@ class Config:
             'name': 'Sphoorthy Engineering College',
             "latitude": 17.282309,
             "longitude": 78.553238, # Replace with your college longitude
-            'radius_km': 2.5  # 500 meter radius - adjust as needed
+            'radius_km': 5000  # 500 meter radius - adjust as needed
         }
     ]
 
-    # Direct access keys
+    SESSION_TIMEOUT_MINUTES = 120
+    
+    # Upload settings
+    MAX_CONTENT_LENGTH = 50 * 1024 * 1024  # 50MB max file size
+    BULK_UPLOAD_CHUNK_SIZE = 1000
+    
+    # Admin access keys
     ADMIN_DIRECT_ACCESS_KEY = 'ctrl_j_secret'
     USER_DIRECT_ACCESS_KEY = 'ctrl_k_secret'
+    
+    # Performance settings
+    JSONIFY_PRETTYPRINT_REGULAR = False

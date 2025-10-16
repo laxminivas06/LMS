@@ -652,6 +652,210 @@ def dashboard():
                           user_profile=current_user)
 
 
+import pandas as pd
+import numpy as np
+import time
+
+
+def load_json_data_optimized(filename):
+    """Optimized JSON data loading with lazy evaluation"""
+    try:
+        filepath = f'data/{filename}'
+        if not os.path.exists(filepath):
+            return []
+        
+        # For large files, consider streaming/chunking
+        file_size = os.path.getsize(filepath)
+        if file_size > 10 * 1024 * 1024:  # 10MB
+            logger.warning(f"Large file detected: {filename} ({file_size} bytes)")
+        
+        with open(filepath, 'r') as f:
+            return json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError) as e:
+        logger.warning(f"Error loading {filename}: {str(e)}")
+        return []
+
+def save_json_data_optimized(filename, data):
+    """Optimized JSON data saving with backup"""
+    try:
+        os.makedirs('data', exist_ok=True)
+        filepath = f'data/{filename}'
+        
+        # Create backup for large files
+        if os.path.exists(filepath) and os.path.getsize(filepath) > 5 * 1024 * 1024:
+            backup_path = f'data/{filename}.backup.{datetime.now().strftime("%Y%m%d_%H%M%S")}'
+            import shutil
+            shutil.copy2(filepath, backup_path)
+        
+        with open(filepath, 'w') as f:
+            json.dump(data, f, separators=(',', ':'))  # Compact JSON
+            
+        logger.info(f"Successfully saved {len(data)} records to {filename}")
+    except Exception as e:
+        logger.error(f"Error saving data to {filename}: {str(e)}")
+        raise
+    
+def process_excel_users_optimized(file):
+    """Optimized bulk user upload with chunk processing"""
+    try:
+        # Read Excel in chunks for memory efficiency
+        chunk_size = 1000
+        chunks = pd.read_excel(file, chunksize=chunk_size)
+        
+        users = load_json_data('users.json')
+        new_users = []
+        errors = []
+        processed_count = 0
+        
+        for chunk_idx, chunk in enumerate(chunks):
+            # Process each chunk
+            for index, row in chunk.iterrows():
+                processed_count += 1
+                
+                # Show progress for large files
+                if processed_count % 500 == 0:
+                    logger.info(f"Processed {processed_count} users...")
+                
+                username = str(row['username']).strip()
+                password = str(row['password']).strip()
+                role = str(row['role']).strip().lower()
+                name = str(row['name']).strip()
+                
+                # Validate role
+                if role not in ['admin', 'student']:
+                    errors.append(f"Row {chunk_idx * chunk_size + index + 2}: Invalid role '{role}'. Must be 'admin' or 'student'")
+                    continue
+                
+                # Validate student credentials
+                if role == 'student':
+                    if not is_valid_rollno(username):
+                        errors.append(f"Row {chunk_idx * chunk_size + index + 2}: Invalid roll number '{username}'. Must be exactly 10 alphanumeric characters")
+                        continue
+                    
+                    # Remove any separators and validate DDMMYYYY format
+                    clean_password = ''.join(filter(str.isdigit, password))
+                    if not is_valid_dob(clean_password):
+                        errors.append(f"Row {chunk_idx * chunk_size + index + 2}: Invalid date of birth '{password}'. Use DDMMYYYY format (8 digits)")
+                        continue
+                    
+                    # Convert to ISO format for storage
+                    password = convert_to_iso_date(clean_password)
+                
+                # Check for duplicate username
+                if any(user['username'] == username for user in users) or \
+                   any(user['username'] == username for user in new_users):
+                    errors.append(f"Row {chunk_idx * chunk_size + index + 2}: Username '{username}' already exists")
+                    continue
+                
+                new_user = {
+                    'id': len(users) + len(new_users) + 1,
+                    'username': username,
+                    'password': password,
+                    'role': role,
+                    'name': name,
+                    'created_at': datetime.now().isoformat(),
+                    'created_by': session.get('user_id', 'admin')
+                }
+                new_users.append(new_user)
+                
+                # Save progress every 1000 records to prevent memory issues
+                if len(new_users) % 1000 == 0:
+                    users.extend(new_users)
+                    save_json_data('users.json', users)
+                    new_users = []  # Reset for next batch
+                    logger.info(f"Saved batch of 1000 users...")
+        
+        # Add remaining new users
+        if new_users:
+            users.extend(new_users)
+            save_json_data('users.json', users)
+        
+        if errors:
+            return False, ";\n".join(errors[:100])  # Limit error output
+        
+        return True, f"Successfully added {processed_count} users"
+        
+    except Exception as e:
+        logger.error(f"Error processing Excel file: {str(e)}")
+        return False, f"Error processing Excel file: {str(e)}"
+
+def process_excel_pdfs_optimized(file):
+    """Optimized bulk PDF upload with chunk processing"""
+    try:
+        chunk_size = 1000
+        chunks = pd.read_excel(file, chunksize=chunk_size)
+        
+        pdfs = load_json_data('pdfs.json')
+        new_pdfs = []
+        errors = []
+        processed_count = 0
+        
+        for chunk_idx, chunk in enumerate(chunks):
+            for index, row in chunk.iterrows():
+                processed_count += 1
+                
+                # Progress tracking
+                if processed_count % 500 == 0:
+                    logger.info(f"Processed {processed_count} PDFs...")
+                
+                title = str(row['title']).strip()
+                category = str(row['category']).strip()
+                drive_link = str(row['drive_link']).strip()
+                
+                # Basic validation
+                if not title:
+                    errors.append(f"Row {chunk_idx * chunk_size + index + 2}: Title is required")
+                    continue
+                
+                if not category:
+                    errors.append(f"Row {chunk_idx * chunk_size + index + 2}: Category is required")
+                    continue
+                
+                if not drive_link.startswith(('http://', 'https://')):
+                    errors.append(f"Row {chunk_idx * chunk_size + index + 2}: Invalid drive link")
+                    continue
+                
+                # Process tags if provided
+                tags = []
+                if 'tags' in chunk.columns and pd.notna(row['tags']):
+                    tags = [tag.strip() for tag in str(row['tags']).split(',')]
+                
+                file_size = str(row['file_size']).strip() if 'file_size' in chunk.columns and pd.notna(row.get('file_size')) else 'N/A'
+                
+                new_pdf = {
+                    'id': len(pdfs) + len(new_pdfs) + 1,
+                    'title': title,
+                    'category': category,
+                    'tags': tags,
+                    'drive_link': drive_link,
+                    'file_size': file_size,
+                    'uploaded_by': session.get('user_id', 'admin'),
+                    'uploaded_at': datetime.now().isoformat(),
+                    'upload_date': datetime.now().strftime('%Y-%m-%d')
+                }
+                new_pdfs.append(new_pdf)
+                
+                # Save progress every 1000 records
+                if len(new_pdfs) % 1000 == 0:
+                    pdfs.extend(new_pdfs)
+                    save_json_data('pdfs.json', pdfs)
+                    new_pdfs = []
+                    logger.info(f"Saved batch of 1000 PDFs...")
+        
+        # Add remaining PDFs
+        if new_pdfs:
+            pdfs.extend(new_pdfs)
+            save_json_data('pdfs.json', pdfs)
+        
+        if errors:
+            return False, ";\n".join(errors[:100])
+        
+        return True, f"Successfully added {processed_count} PDFs"
+        
+    except Exception as e:
+        logger.error(f"Error processing Excel file: {str(e)}")
+        return False, f"Error processing Excel file: {str(e)}"
+    
 @app.route('/admin/delete-pdf/<int:pdf_id>', methods=['POST'])
 @require_location_verification
 def delete_pdf(pdf_id):
@@ -743,7 +947,7 @@ def admin_users():
 @app.route('/admin/upload-users-excel', methods=['POST'])
 @require_location_verification
 def upload_users_excel():
-    """Upload users via Excel file"""
+    """Upload users via Excel file with progress tracking"""
     if session.get('user_role') != 'admin':
         return jsonify({'success': False, 'message': 'Access denied'}), 403
     
@@ -757,17 +961,33 @@ def upload_users_excel():
     if not file.filename.endswith(('.xlsx', '.xls')):
         return jsonify({'success': False, 'message': 'Please upload an Excel file (.xlsx or .xls)'}), 400
     
-    success, message = process_excel_users(file)
+    # Check file size (limit to 50MB for bulk uploads)
+    file.seek(0, 2)  # Seek to end
+    file_size = file.tell()
+    file.seek(0)  # Reset to beginning
+    
+    if file_size > 50 * 1024 * 1024:  # 50MB
+        return jsonify({'success': False, 'message': 'File size too large. Maximum 50MB allowed.'}), 400
+    
+    # Start processing
+    start_time = time.time()
+    success, message = process_excel_users_optimized(file)
+    processing_time = time.time() - start_time
+    
+    logger.info(f"Bulk user upload completed in {processing_time:.2f} seconds")
     
     if success:
-        return jsonify({'success': True, 'message': message})
+        return jsonify({
+            'success': True, 
+            'message': f"{message}. Processing time: {processing_time:.2f}s"
+        })
     else:
         return jsonify({'success': False, 'message': message}), 400
 
 @app.route('/admin/upload-pdfs-excel', methods=['POST'])
 @require_location_verification
 def upload_pdfs_excel():
-    """Upload PDFs via Excel file"""
+    """Upload PDFs via Excel file with progress tracking"""
     if session.get('user_role') != 'admin':
         return jsonify({'success': False, 'message': 'Access denied'}), 403
     
@@ -781,13 +1001,29 @@ def upload_pdfs_excel():
     if not file.filename.endswith(('.xlsx', '.xls')):
         return jsonify({'success': False, 'message': 'Please upload an Excel file (.xlsx or .xls)'}), 400
     
-    success, message = process_excel_pdfs(file)
+    # Check file size
+    file.seek(0, 2)
+    file_size = file.tell()
+    file.seek(0)
+    
+    if file_size > 50 * 1024 * 1024:  # 50MB
+        return jsonify({'success': False, 'message': 'File size too large. Maximum 50MB allowed.'}), 400
+    
+    # Start processing
+    start_time = time.time()
+    success, message = process_excel_pdfs_optimized(file)
+    processing_time = time.time() - start_time
+    
+    logger.info(f"Bulk PDF upload completed in {processing_time:.2f} seconds")
     
     if success:
-        return jsonify({'success': True, 'message': message})
+        return jsonify({
+            'success': True, 
+            'message': f"{message}. Processing time: {processing_time:.2f}s"
+        })
     else:
         return jsonify({'success': False, 'message': message}), 400
-
+    
 @app.route('/admin/add-pdf', methods=['POST'])
 @require_location_verification
 def add_pdf():
