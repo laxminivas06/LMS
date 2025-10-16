@@ -652,6 +652,18 @@ def dashboard():
                           user_profile=current_user)
 
 
+@app.route('/admin/delete-pdf/<int:pdf_id>', methods=['POST'])
+@require_location_verification
+def delete_pdf(pdf_id):
+    """Delete PDF (Admin only)"""
+    if session.get('user_role') != 'admin':
+        return jsonify({'success': False, 'message': 'Access denied'}), 403
+    
+    pdfs = load_json_data('pdfs.json')
+    pdfs = [pdf for pdf in pdfs if pdf['id'] != pdf_id]
+    save_json_data('pdfs.json', pdfs)
+    
+    return jsonify({'success': True, 'message': 'PDF deleted successfully'})
 
 # Update the admin dashboard route as well
 @app.route('/admin')
