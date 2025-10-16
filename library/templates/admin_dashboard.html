@@ -1106,6 +1106,282 @@
         font-size: 0.6rem;
     }
 }
+
+/* Table Container Styles */
+.table-container {
+    position: relative;
+    width: 100%;
+}
+
+.table-responsive {
+    border-radius: 8px;
+    overflow: hidden;
+    width: 100%;
+}
+
+/* Mobile scroll indicator */
+.mobile-scroll-indicator {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px;
+    background: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+    color: #6c757d;
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+.mobile-scroll-indicator i {
+    color: var(--secondary-color);
+    animation: bounceHorizontal 2s infinite;
+}
+
+@keyframes bounceHorizontal {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateX(0);
+    }
+    40% {
+        transform: translateX(-5px);
+    }
+    60% {
+        transform: translateX(5px);
+    }
+}
+
+/* Table Styles */
+.table {
+    margin-bottom: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    width: 100%;
+    min-width: 600px; /* Ensure table has minimum width for horizontal scroll */
+}
+
+.table thead th {
+    background: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+    color: var(--dark-color);
+    padding: 15px;
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.table tbody tr {
+    transition: var(--transition);
+}
+
+.table tbody tr:hover {
+    background-color: #f8f9fa;
+    transform: translateY(-1px);
+}
+
+.table tbody td {
+    padding: 15px;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+/* Action buttons */
+.action-buttons {
+    display: flex;
+    gap: 5px;
+    flex-wrap: nowrap;
+    justify-content: center;
+}
+
+/* Badge Styles */
+.badge {
+    padding: 6px 12px;
+    font-weight: 500;
+    border-radius: 20px;
+    transition: var(--transition);
+    white-space: nowrap;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .table thead th,
+    .table tbody td {
+        padding: 12px;
+    }
+}
+
+@media (max-width: 992px) {
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .table {
+        min-width: 800px; /* Increased minimum width for more columns */
+    }
+    
+    .table thead th,
+    .table tbody td {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+    
+    .action-buttons {
+        flex-direction: row;
+        gap: 3px;
+    }
+    
+    .btn-sm {
+        padding: 5px 8px;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .table-responsive {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+    }
+    
+    .table {
+        min-width: 700px;
+        margin-bottom: 0;
+    }
+    
+    .table thead th,
+    .table tbody td {
+        padding: 8px;
+        font-size: 0.85rem;
+    }
+    
+    .badge {
+        padding: 4px 8px;
+        font-size: 0.75rem;
+    }
+    
+    .mobile-scroll-indicator {
+        display: flex;
+    }
+    
+    /* Add visual scrollbar for mobile */
+    .table-responsive::-webkit-scrollbar {
+        height: 6px;
+    }
+    
+    .table-responsive::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+    }
+    
+    .table-responsive::-webkit-scrollbar-thumb {
+        background: var(--secondary-color);
+        border-radius: 3px;
+    }
+    
+    .table-responsive::-webkit-scrollbar-thumb:hover {
+        background: var(--accent-color);
+    }
+}
+
+@media (max-width: 576px) {
+    .table {
+        min-width: 650px;
+    }
+    
+    .table thead th,
+    .table tbody td {
+        padding: 6px;
+        font-size: 0.8rem;
+    }
+    
+    .action-buttons .btn-sm {
+        padding: 4px 6px;
+        font-size: 0.75rem;
+        min-width: 32px;
+    }
+    
+    .badge {
+        padding: 3px 6px;
+        font-size: 0.7rem;
+    }
+    
+    .mobile-scroll-indicator {
+        font-size: 0.8rem;
+        padding: 10px;
+    }
+    
+    .mobile-scroll-indicator i {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .table {
+        min-width: 600px;
+    }
+    
+    .table thead th,
+    .table tbody td {
+        padding: 5px;
+        font-size: 0.75rem;
+    }
+    
+    .action-buttons {
+        gap: 2px;
+    }
+    
+    .action-buttons .btn-sm {
+        padding: 3px 5px;
+        font-size: 0.7rem;
+        min-width: 30px;
+    }
+    
+    .badge {
+        padding: 2px 5px;
+        font-size: 0.65rem;
+    }
+    
+    .mobile-scroll-indicator {
+        font-size: 0.75rem;
+        padding: 8px;
+        flex-direction: column;
+        gap: 5px;
+    }
+}
+
+/* Enhanced scroll behavior for touch devices */
+@media (hover: none) and (pointer: coarse) {
+    .table-responsive {
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .table {
+        min-width: 650px;
+    }
+    
+    /* Add momentum scrolling for iOS */
+    .table-responsive {
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* Print styles */
+@media print {
+    .table-responsive {
+        overflow: visible !important;
+    }
+    
+    .table {
+        min-width: auto !important;
+    }
+    
+    .mobile-scroll-indicator {
+        display: none !important;
+    }
+}
     </style>
 </head>
 <body>
@@ -1201,52 +1477,61 @@
     </div>
 </div>
 
-                  
+                  <!-- PDF List Section -->
+<div class="card">
+    <div class="card-header">
+        <i class="fas fa-table"></i> PDF List
+    </div>
+    <div class="card-body">
+        <div class="table-container">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>Uploaded By</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pdf in pdfs %}
+                        <tr>
+                            <td>{{ pdf.id }}</td>
+                            <td>{{ pdf.title }}</td>
+                            <td><span class="badge bg-primary">{{ pdf.category }}</span></td>
+                            <td>{{ pdf.uploaded_by }}</td>
+                            <td>{{ pdf.upload_date }}</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="{{ pdf.drive_link }}" target="_blank" class="btn btn-sm btn-outline-primary" title="View PDF">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="deletePdf('{{ pdf.id }}')" title="Delete PDF">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Mobile scroll indicator -->
+            <div class="mobile-scroll-indicator">
+                <i class="fas fa-arrows-left-right"></i>
+                <span>Swipe left/right to view more</span>
+            </div>
+        </div>
+    </div>
+</div>
 
 
-                    <div class="card">
-                        <div class="card-header">
-                            <i class="fas fa-table"></i> PDF List
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Title</th>
-                                            <th>Category</th>
-                                            <th>Uploaded By</th>
-                                            <th>Date</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for pdf in pdfs %}
-                                        <tr>
-                                            <td>{{ pdf.id }}</td>
-                                            <td>{{ pdf.title }}</td>
-                                            <td><span class="badge bg-primary">{{ pdf.category }}</span></td>
-                                            <td>{{ pdf.uploaded_by }}</td>
-                                            <td>{{ pdf.upload_date }}</td>
-                                            <td>
-                                                <div class="action-buttons">
-                                                    <a href="{{ pdf.drive_link }}" target="_blank" class="btn btn-sm btn-outline-primary" title="View PDF">
-                                                        <i class="fas fa-eye"></i>
-                                                    </a>
-                                                    <button class="btn btn-sm btn-outline-danger" onclick="deletePdf('{{ pdf.id }}')" title="Delete PDF">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
 
+                   
                     <!-- Excel Upload Section for PDFs -->
                     <div class="card">
                         <div class="card-header">
