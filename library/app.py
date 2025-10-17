@@ -75,26 +75,65 @@ def require_location_verification(f):
     
     return decorated_function
 
-# Helper functions
 def load_json_data(filename):
-    """Load JSON data from file"""
+    """Load JSON data from file with better error handling"""
+    filepath = f'data/{filename}'
     try:
-        with open(f'data/{filename}', 'r') as f:
-            return json.load(f)
-    except (FileNotFoundError, json.JSONDecodeError):
-        logger.warning(f"File data/{filename} not found or invalid, returning empty list")
+        # Create data directory if it doesn't exist
+        os.makedirs('data', exist_ok=True)
+        
+        if not os.path.exists(filepath):
+            logger.info(f"File {filepath} does not exist, returning empty list")
+            return []
+        
+        with open(filepath, 'r', encoding='utf-8') as f:
+            content = f.read().strip()
+            if not content:
+                logger.info(f"File {filepath} is empty, returning empty list")
+                return []
+            data = json.loads(content)
+            logger.info(f"Successfully loaded {len(data)} items from {filename}")
+            return data
+            
+    except json.JSONDecodeError as e:
+        logger.error(f"JSON decode error in {filename}: {str(e)}")
+        # Try to backup the corrupted file
+        try:
+            if os.path.exists(filepath):
+                backup_path = f'{filepath}.corrupted.{datetime.now().strftime("%Y%m%d_%H%M%S")}'
+                os.rename(filepath, backup_path)
+                logger.info(f"Backed up corrupted file to {backup_path}")
+        except:
+            pass
+        return []
+    except Exception as e:
+        logger.error(f"Error loading {filename}: {str(e)}")
         return []
 
 def save_json_data(filename, data):
-    """Save data to JSON file"""
+    """Save data to JSON file with better error handling"""
+    filepath = f'data/{filename}'
     try:
         os.makedirs('data', exist_ok=True)
-        with open(f'data/{filename}', 'w') as f:
-            json.dump(data, f, indent=2)
-        logger.info(f"Successfully saved data to data/{filename}")
+        
+        # Create backup if file exists
+        if os.path.exists(filepath):
+            backup_path = f'{filepath}.backup.{datetime.now().strftime("%Y%m%d_%H%M%S")}'
+            import shutil
+            shutil.copy2(filepath, backup_path)
+            logger.info(f"Created backup: {backup_path}")
+        
+        with open(filepath, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+        
+        logger.info(f"Successfully saved {len(data)} items to {filename}")
+        return True
+        
     except Exception as e:
-        logger.error(f"Error saving data to data/{filename}: {str(e)}")
+        logger.error(f"Error saving to {filename}: {str(e)}")
+        logger.error(traceback.format_exc())
         raise
+
 
 def calculate_distance(lat1, lon1, lat2, lon2):
     """Calculate distance between two coordinates in kilometers"""
@@ -110,15 +149,53 @@ def calculate_distance(lat1, lon1, lat2, lon2):
     return R * c
 
 def is_location_allowed(user_lat, user_lon):
-    """Check if user is within any allowed location"""
-    for location in app.config['ALLOWED_LOCATIONS']:
-        distance = calculate_distance(
-            user_lat, user_lon,
-            location['latitude'], location['longitude']
-        )
-        if distance <= location['radius_km']:
-            return True, location['name']
+    """Check if user is within any allowed location with multiple boundary types"""
+    boundaries = load_json_data('boundaries.json')
+    
+    for boundary in boundaries:
+        if boundary['type'] == 'circle':
+            # Convert radius_km to float to handle both string and number formats
+            try:
+                radius_km = float(boundary['radius_km'])
+            except (ValueError, TypeError):
+                logger.warning(f"Invalid radius_km value in boundary {boundary.get('name', 'unknown')}: {boundary.get('radius_km')}")
+                continue
+                
+            distance = calculate_distance(
+                user_lat, user_lon,
+                boundary['latitude'], boundary['longitude']
+            )
+            if distance <= radius_km:
+                return True, boundary['name']
+        
+        elif boundary['type'] == 'rectangle':
+            # Check if point is within rectangle bounds
+            if (boundary['south'] <= user_lat <= boundary['north'] and 
+                boundary['west'] <= user_lon <= boundary['east']):
+                return True, boundary['name']
+        
+        elif boundary['type'] == 'polygon':
+            # Simple polygon point-in-polygon check
+            if is_point_in_polygon(user_lat, user_lon, boundary['coordinates']):
+                return True, boundary['name']
+    
     return False, None
+
+def is_point_in_polygon(lat, lon, polygon):
+    """Check if a point is inside a polygon using ray casting algorithm"""
+    n = len(polygon)
+    inside = False
+    
+    j = n - 1
+    for i in range(n):
+        if (((polygon[i][1] > lon) != (polygon[j][1] > lon)) and
+            (lat < (polygon[j][0] - polygon[i][0]) * (lon - polygon[i][1]) / 
+             (polygon[j][1] - polygon[i][1]) + polygon[i][0])):
+            inside = not inside
+        j = i
+    
+    return inside
+
 
 def validate_student_credentials(username, password):
     """Validate student credentials (rollno as username, DOB as password)"""
@@ -675,6 +752,281 @@ def load_json_data_optimized(filename):
         logger.warning(f"Error loading {filename}: {str(e)}")
         return []
 
+
+@app.route('/admin/location')
+@require_location_verification
+def admin_location():
+    """Admin location boundary management page"""
+    if session.get('user_role') != 'admin':
+        flash('Access denied. Admin privileges required.', 'error')
+        return redirect(url_for('dashboard'))
+    
+    return render_template('admin_location.html',
+                         username=session.get('user_id'),
+                         location=session.get('verified_location'))
+
+
+import traceback
+import os
+
+@app.route('/admin/save-boundary', methods=['POST'])
+def save_boundary():
+    """Save location boundary (Admin only)"""
+    try:
+        # Check admin permissions
+        if session.get('user_role') != 'admin':
+            logger.warning(f"Unauthorized access attempt by user: {session.get('user_id')}")
+            return jsonify({'success': False, 'message': 'Access denied. Admin privileges required.'}), 403
+        
+        # Get and validate data
+        data = request.get_json()
+        if not data:
+            return jsonify({'success': False, 'message': 'No data provided'}), 400
+        
+        logger.info(f"Received boundary data: {data}")
+        
+        # Validate required fields
+        required_fields = ['name', 'type']
+        for field in required_fields:
+            if not data.get(field):
+                return jsonify({'success': False, 'message': f'Missing required field: {field}'}), 400
+        
+        # Validate and convert data types
+        if data['type'] == 'circle':
+            circle_fields = ['latitude', 'longitude', 'radius_km']
+            for field in circle_fields:
+                if field not in data:
+                    return jsonify({'success': False, 'message': f'Missing circle field: {field}'}), 400
+                try:
+                    # Convert to float to ensure proper data type
+                    data[field] = float(data[field])
+                except (ValueError, TypeError):
+                    return jsonify({'success': False, 'message': f'Invalid {field} value: {data[field]}'}), 400
+        
+        elif data['type'] == 'rectangle':
+            rect_fields = ['north', 'south', 'east', 'west']
+            for field in rect_fields:
+                if field not in data:
+                    return jsonify({'success': False, 'message': f'Missing rectangle field: {field}'}), 400
+                try:
+                    # Convert to float
+                    data[field] = float(data[field])
+                except (ValueError, TypeError):
+                    return jsonify({'success': False, 'message': f'Invalid {field} value: {data[field]}'}), 400
+        
+        elif data['type'] == 'polygon':
+            if 'coordinates' not in data or not data['coordinates']:
+                return jsonify({'success': False, 'message': 'Missing polygon coordinates'}), 400
+            # Validate polygon coordinates
+            try:
+                for i, coord in enumerate(data['coordinates']):
+                    if len(coord) != 2:
+                        return jsonify({'success': False, 'message': f'Invalid coordinate at index {i}'}), 400
+                    data['coordinates'][i] = [float(coord[0]), float(coord[1])]
+            except (ValueError, TypeError) as e:
+                return jsonify({'success': False, 'message': f'Invalid coordinate format: {str(e)}'}), 400
+        
+        else:
+            return jsonify({'success': False, 'message': f'Invalid boundary type: {data["type"]}'}), 400
+        
+        # Load existing boundaries
+        try:
+            boundaries = load_json_data('boundaries.json')
+        except Exception as e:
+            logger.warning(f"Could not load boundaries, starting fresh: {str(e)}")
+            boundaries = []
+        
+        # Check if boundary with same name exists
+        existing_index = next((i for i, b in enumerate(boundaries) if b['name'] == data['name']), -1)
+        
+        if existing_index >= 0:
+            # Update existing boundary
+            boundaries[existing_index] = {
+                **boundaries[existing_index],
+                **data,
+                'updated_at': datetime.now().isoformat(),
+                'updated_by': session.get('user_id')
+            }
+            message = 'Boundary updated successfully'
+            action = 'updated'
+        else:
+            # Add new boundary with ID
+            new_boundary = {
+                'id': len(boundaries) + 1,
+                **data,
+                'created_by': session.get('user_id'),
+                'created_at': datetime.now().isoformat()
+            }
+            boundaries.append(new_boundary)
+            message = 'Boundary saved successfully'
+            action = 'created'
+        
+        # Save boundaries
+        save_json_data('boundaries.json', boundaries)
+        
+        logger.info(f"Boundary '{data['name']}' {action} successfully. Total boundaries: {len(boundaries)}")
+        return jsonify({'success': True, 'message': message})
+        
+    except Exception as e:
+        logger.error(f"Error saving boundary: {str(e)}")
+        logger.error(traceback.format_exc())
+        return jsonify({
+            'success': False, 
+            'message': f'Server error while saving boundary: {str(e)}'
+        }), 500
+
+
+def fix_existing_boundaries():
+    """Fix existing boundaries with string values"""
+    try:
+        boundaries = load_json_data('boundaries.json')
+        fixed_count = 0
+        
+        for boundary in boundaries:
+            if boundary['type'] == 'circle' and isinstance(boundary.get('radius_km'), str):
+                try:
+                    boundary['radius_km'] = float(boundary['radius_km'])
+                    fixed_count += 1
+                except (ValueError, TypeError):
+                    logger.warning(f"Could not convert radius_km for boundary: {boundary.get('name')}")
+        
+        if fixed_count > 0:
+            save_json_data('boundaries.json', boundaries)
+            logger.info(f"Fixed {fixed_count} boundaries with string values")
+        
+        return fixed_count
+    except Exception as e:
+        logger.error(f"Error fixing boundaries: {str(e)}")
+        return 0
+
+# Call this function once to fix existing data
+# fix_existing_boundaries()
+#    
+@app.route('/admin/get-boundaries')
+def get_boundaries():
+    """Get all location boundaries"""
+    try:
+        # Check admin permissions
+        if session.get('user_role') != 'admin':
+            return jsonify({'success': False, 'message': 'Access denied'}), 403
+        
+        boundaries = load_json_data('boundaries.json')
+        logger.info(f"Loaded {len(boundaries)} boundaries")
+        return jsonify({'success': True, 'boundaries': boundaries})
+        
+    except Exception as e:
+        logger.error(f"Error loading boundaries: {str(e)}")
+        logger.error(traceback.format_exc())
+        return jsonify({
+            'success': False, 
+            'message': f'Error loading boundaries: {str(e)}',
+            'boundaries': []
+        }), 500
+
+@app.route('/admin/delete-boundary', methods=['POST'])
+def delete_boundary():
+    """Delete location boundary (Admin only)"""
+    try:
+        if session.get('user_role') != 'admin':
+            return jsonify({'success': False, 'message': 'Access denied'}), 403
+        
+        data = request.get_json()
+        boundary_name = data.get('name')
+        
+        if not boundary_name:
+            return jsonify({'success': False, 'message': 'Boundary name required'}), 400
+        
+        boundaries = load_json_data('boundaries.json')
+        initial_count = len(boundaries)
+        boundaries = [b for b in boundaries if b['name'] != boundary_name]
+        
+        if len(boundaries) == initial_count:
+            return jsonify({'success': False, 'message': 'Boundary not found'}), 404
+        
+        save_json_data('boundaries.json', boundaries)
+        
+        logger.info(f"Boundary '{boundary_name}' deleted successfully. Remaining boundaries: {len(boundaries)}")
+        return jsonify({'success': True, 'message': 'Boundary deleted successfully'})
+        
+    except Exception as e:
+        logger.error(f"Error deleting boundary: {str(e)}")
+        logger.error(traceback.format_exc())
+        return jsonify({
+            'success': False, 
+            'message': f'Error deleting boundary: {str(e)}'
+        }), 500
+    
+
+@app.route('/debug/boundaries')
+def debug_boundaries():
+    """Debug endpoint to check boundaries data"""
+    try:
+        boundaries = load_json_data('boundaries.json')
+        return jsonify({
+            'success': True,
+            'boundaries': boundaries,
+            'file_exists': os.path.exists('data/boundaries.json')
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'traceback': traceback.format_exc()
+        })
+
+@app.route('/debug/save-test', methods=['POST'])
+def debug_save_test():
+    """Test endpoint to check if saving works"""
+    try:
+        data = request.get_json()
+        logger.info(f"Received data: {data}")
+        
+        # Test saving simple data
+        test_data = {
+            'test': True,
+            'timestamp': datetime.now().isoformat(),
+            'received_data': data
+        }
+        
+        # Save to a test file
+        save_json_data('test.json', [test_data])
+        
+        return jsonify({
+            'success': True,
+            'message': 'Test save successful',
+            'saved_data': test_data
+        })
+    except Exception as e:
+        logger.error(f"Debug save error: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'traceback': traceback.format_exc()
+        }), 500
+    
+def update_app_boundaries(boundaries):
+    """Update app config with new boundaries"""
+    try:
+        # Convert boundaries to the format expected by is_location_allowed
+        allowed_locations = []
+        
+        for boundary in boundaries:
+            if boundary['type'] == 'circle':
+                allowed_locations.append({
+                    'name': boundary['name'],
+                    'latitude': boundary['latitude'],
+                    'longitude': boundary['longitude'],
+                    'radius_km': float(boundary['radius_km'])
+                })
+            # For rectangle and polygon types, you might need additional logic
+            # This is a simplified version focusing on circles
+        
+        app.config['ALLOWED_LOCATIONS'] = allowed_locations
+        logger.info(f"Updated app boundaries with {len(allowed_locations)} locations")
+        
+    except Exception as e:
+        logger.error(f"Error updating app boundaries: {str(e)}")
+        
 def save_json_data_optimized(filename, data):
     """Optimized JSON data saving with backup"""
     try:
@@ -694,7 +1046,7 @@ def save_json_data_optimized(filename, data):
     except Exception as e:
         logger.error(f"Error saving data to {filename}: {str(e)}")
         raise
-    
+
 def process_excel_users_optimized(file):
     """Optimized bulk user upload with chunk processing"""
     try:

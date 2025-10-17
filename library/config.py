@@ -14,7 +14,7 @@ class Config:
             'name': 'Sphoorthy Engineering College',
             "latitude": 17.282309,
             "longitude": 78.553238, # Replace with your college longitude
-            'radius_km': 5000  # 500 meter radius - adjust as needed
+            'radius_km': 5000000  # 500 meter radius - adjust as needed
         }
     ]
 
